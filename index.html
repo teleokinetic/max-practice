@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>For Max · Practice Dashboard</title>
+  <meta name="theme-color" content="#EFE6D6">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="For Max">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Self-contained — Straight Port chassis on the course's tokens. */
+    :root{
+      --clay:#B5613F; --clay-hover:#A4542F; --ink:#2A2520;
+      --sand:#F1E7D8; --paper:#FBF7EF; --hair:#ECE3D3; --hair2:#D8C9B3; --hair-sand:#E3D3BA;
+      --body:#3A352E; --body2:#5A5249; --sec:#6A6056; --mut:#8A8076; --mut2:#9C7A4E;
+      --faint:#B3A48D; --faint2:#BBAE9B; --faint3:#C2B5A1; --eyebrow:#A89A86;
+      --serif:'Spectral',Georgia,serif;
+      --sans:'Hanken Grotesk',system-ui,sans-serif;
+      --mono:'Spline Sans Mono',ui-monospace,monospace;
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;}
+    body{background:#EFE6D6;color:var(--body);font-family:var(--sans);
+      -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+    button{font-family:inherit;cursor:pointer;border:none;background:none;}
+    a{color:inherit;text-decoration:none;}
+
+    .screen{background:var(--paper);min-height:100vh;
+      padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
+    @media (min-width:760px){
+      body{padding:36px 0 44px;}
+      .screen{max-width:1010px;margin:0 auto;min-height:auto;border-radius:18px;
+        box-shadow:0 6px 26px rgba(60,45,25,.13);overflow:hidden;}
+    }
+    .topbar{display:none;align-items:center;justify-content:space-between;
+      padding:24px 52px;border-bottom:1px solid var(--hair);}
+    .wordmark{font:600 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--clay);}
+    .topright{font:500 13px/1 var(--sans);color:var(--eyebrow);}
+    @media (min-width:760px){ .topbar{display:flex;} }
+
+    .view{display:none;}
+    .view.on{display:block;}
+
+    .m-eyebrow{font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--clay);}
+    .m-eyebrow.quiet{color:var(--eyebrow);letter-spacing:.18em;}
+
+    /* home */
+    .home-grid{display:grid;grid-template-areas:"head" "lib" "watch" "meta";padding:30px 26px 40px;
+      column-gap:64px;}
+    .g-head{grid-area:head;} .g-lib{grid-area:lib;} .g-watch{grid-area:watch;} .g-meta{grid-area:meta;}
+    @media (min-width:760px){
+      .home-grid{grid-template-columns:330px minmax(0,1fr);
+        grid-template-areas:"head lib" "watch lib" "watch meta";
+        grid-template-rows:auto 1fr auto;padding:46px 52px 56px;}
+      .g-head .m-eyebrow.formax{display:none;}
+      .lib-row{padding:19px 0;}
+      .lr-title{font-size:17px;}
+      .lr-sub{font-size:12.5px;margin-top:3px;}
+      .pcirc{width:34px;height:34px;}
+    }
+    .m-h1{font:600 30px/1.12 var(--serif);color:var(--ink);margin:10px 0 0;}
+    @media (min-width:760px){ .m-h1{font-size:34px;margin-top:0;} }
+    .m-one{font:italic 400 15.5px/1.55 var(--serif);color:var(--sec);margin:9px 0 0;}
+    .rhythm{background:var(--sand);border-radius:14px;padding:14px 17px;display:flex;gap:13px;
+      align-items:flex-start;margin-top:18px;}
+    .dots{display:flex;gap:6px;align-items:center;flex:0 0 auto;padding-top:4px;}
+    .dot{width:10px;height:10px;border:1.5px solid var(--clay);border-radius:50%;}
+    .dot.fill{background:var(--clay);}
+    .dot.big{width:15px;height:15px;}
+    .rhythm-text{flex:1;min-width:0;}
+    .rhythm p{margin:0;font:400 13px/1.55 var(--sans);color:var(--body2);}
+    .rhythm p.rest{margin-top:9px;padding-top:9px;border-top:1px solid var(--hair-sand);
+      color:var(--sec);}
+
+    .lib-head{margin:26px 0 4px;}
+    @media (min-width:760px){ .lib-head{margin-top:6px;} }
+    .lib-row{display:flex;align-items:center;gap:13px;padding:15px 0;border-top:1px solid var(--hair);
+      width:100%;text-align:left;}
+    .lib-row:first-of-type{border-top:none;}
+    .lib-row:hover .lr-title{color:var(--clay);}
+    .lib-row:focus-visible{outline:2px solid var(--clay);outline-offset:3px;border-radius:6px;}
+    .pcirc{width:30px;height:30px;border-radius:50%;border:1px solid var(--hair2);flex:0 0 auto;
+      display:flex;align-items:center;justify-content:center;}
+    .pcirc .tri{width:0;height:0;border-left:9px solid var(--faint);border-top:5.5px solid transparent;
+      border-bottom:5.5px solid transparent;margin-left:2px;}
+    .lr-main{flex:1;min-width:0;}
+    .lr-title{font:500 15.5px/1.3 var(--serif);color:var(--body);}
+    .lr-sub{font:400 12px/1.5 var(--sans);color:#9C8F7E;margin-top:2px;}
+    .lr-dur{font:500 11px/1 var(--mono);color:var(--faint);flex:0 0 auto;}
+    .lr-chev{color:var(--faint3);font-size:15px;padding:0 2px;}
+    .lib-hint{font:400 12px/1.5 var(--sans);color:var(--eyebrow);margin-top:18px;}
+
+    .watch{background:var(--sand);border-radius:14px;padding:15px 18px;margin-top:22px;}
+    .watch ul{margin:9px 0 0;padding-left:17px;}
+    .watch li{font:400 13.5px/1.55 var(--serif);color:var(--body2);margin:5px 0;}
+    .watch .meta-body{font:400 13.5px/1.6 var(--serif);color:var(--body2);margin:9px 0 0;}
+
+    /* practice pages */
+    .lesson{padding:26px 26px 46px;max-width:620px;margin:0 auto;}
+    @media (min-width:760px){ .lesson{padding:44px 26px 56px;} }
+    .backrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+    .backlink{font:400 13.5px/1 var(--sans);color:#9C8F7E;padding:4px 0;}
+    .backlink:hover{color:var(--clay);}
+    .m-chip{display:inline-block;font:600 9.5px/1 var(--sans);letter-spacing:.14em;
+      text-transform:uppercase;color:var(--clay);border:1px solid #DDBFA9;border-radius:999px;
+      padding:4px 9px;}
+    .m-h2{font:600 25px/1.18 var(--serif);color:var(--ink);margin:14px 0 0;}
+    .teacher-line{font:400 13px/1.5 var(--sans);color:#9C8F7E;margin-top:6px;}
+    .m-player{background:var(--ink);border-radius:16px;padding:14px 16px;display:flex;
+      align-items:center;gap:13px;margin-top:18px;}
+    .playbtn{width:46px;height:46px;border-radius:50%;background:var(--clay);flex:0 0 auto;
+      display:flex;align-items:center;justify-content:center;box-shadow:0 4px 13px rgba(181,97,63,.4);}
+    .playbtn:hover{background:var(--clay-hover);}
+    .playbtn:focus-visible{outline:2px solid var(--paper);outline-offset:2px;}
+    .playbtn .tri{width:0;height:0;border-left:14px solid #fff;border-top:9px solid transparent;
+      border-bottom:9px solid transparent;margin-left:3px;}
+    .playbtn .bars{display:flex;gap:4px;}
+    .playbtn .bars i{width:4.5px;height:17px;background:#fff;border-radius:2px;display:block;}
+    .pm{flex:1;min-width:0;}
+    .pm .now{font:600 9px/1 var(--sans);letter-spacing:.14em;color:#C69A78;
+      text-transform:uppercase;margin-bottom:5px;}
+    .pm .ptitle{font:600 15px/1.25 var(--serif);color:#F6ECDC;white-space:nowrap;overflow:hidden;
+      text-overflow:ellipsis;}
+    .scrub{display:flex;align-items:center;gap:8px;margin-top:8px;}
+    .ptrack{flex:1;height:5px;border-radius:2px;background:#4A3F35;position:relative;cursor:pointer;}
+    .pfill{width:0;height:100%;border-radius:2px;background:var(--clay);}
+    .knob{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:11px;height:11px;
+      border-radius:50%;background:#F6ECDC;}
+    .ptime{font:500 10px/1 var(--mono);color:#C69A78;flex:0 0 auto;}
+    .m-body{font:400 15.5px/1.75 var(--serif);color:var(--body);margin:20px 0 0;}
+    .tags{margin:20px 0 0;display:flex;flex-direction:column;gap:9px;}
+    .tag-group{display:flex;align-items:center;gap:11px;}
+    .tg-label{font:600 9.5px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;
+      color:var(--faint);flex:0 0 72px;text-align:right;}
+    .tag-line{font:500 12.5px/1.6 var(--sans);color:var(--body2);background:var(--sand);
+      border-radius:999px;padding:6px 13px;}
+    .pull{font:italic 400 14.5px/1.6 var(--serif);color:var(--sec);margin:16px 0 0;
+      padding-left:12px;border-left:2px solid var(--hair2);}
+    .note-card{background:var(--sand);border-radius:14px;padding:16px 18px;margin-top:24px;}
+    .note-card .prompt{font:500 14.5px/1.4 var(--sans);color:var(--body);margin:8px 0 0;}
+    .n-box{display:block;width:100%;background:var(--paper);border:1px solid var(--hair-sand);
+      border-radius:10px;padding:12px 13px;min-height:84px;margin-top:10px;resize:vertical;
+      font:400 14px/1.6 var(--serif);color:var(--body);}
+    .n-box::placeholder{font-style:italic;color:var(--faint);}
+    .n-box:focus{outline:2px solid rgba(181,97,63,.5);outline-offset:1px;}
+    .send-row{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .send{display:inline-block;background:var(--clay);color:#FFF8EE;font:600 13px/1 var(--sans);
+      padding:11px 18px;border-radius:999px;}
+    .send:hover{background:var(--clay-hover);}
+    .send:focus-visible{outline:2px solid var(--clay);outline-offset:3px;}
+    .send[disabled]{opacity:.55;cursor:default;}
+    .helper{font:400 11.5px/1.45 var(--sans);color:var(--mut);flex:1;min-width:180px;}
+    .note-status{font:600 12px/1.5 var(--sans);color:var(--mut2);margin-top:10px;min-height:18px;}
+    .note-status.err{color:#8A4B2F;}
+    .note-history{margin-top:14px;border-top:1px solid var(--hair-sand);padding-top:12px;}
+    .note-history .nh-item{margin:0 0 10px;}
+    .note-history .nh-date{font:600 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+      color:#9C8F7E;}
+    .note-history .nh-text{font:400 13.5px/1.55 var(--serif);color:var(--body2);margin:4px 0 0;}
+  </style>
+</head>
+<body>
+  <main class="screen">
+    <div class="topbar">
+      <span class="wordmark">For Max</span>
+      <span class="topright">Practice dashboard</span>
+    </div>
+
+    <!-- ============ HOME ============ -->
+    <section class="view" id="view-home">
+      <div class="home-grid">
+        <div class="g-head">
+          <div class="m-eyebrow formax">For Max</div>
+          <h1 class="m-h1">Max Soweski</h1>
+          <p class="m-one">Getting to know the lower belly! Power 🤝 presence</p>
+          <div class="rhythm">
+            <div class="dots"><i class="dot fill"></i><i class="dot"></i><i class="dot big"></i></div>
+            <div class="rhythm-text">
+              <p>Recommended dose: 1-3x per week. One or two is more than enough to move the needle, and a third is a nice boost if practice feels especially interesting.</p>
+              <p class="rest">Leave a day between sessions — a good portion of the learning consolidates offline, in the rest and sleep after practice.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="g-lib">
+          <div class="m-eyebrow quiet lib-head">Practice library</div>
+          <a class="lib-row" href="#/pelvic-clock">
+            <div class="pcirc"><i class="tri"></i></div>
+            <div class="lr-main">
+              <div class="lr-title">Pelvic Clock — Connected Spine</div>
+              <div class="lr-sub">Tanner Holman · start here</div>
+            </div>
+            <span class="lr-dur">31:12</span>
+            <span class="lr-chev">›</span>
+          </a>
+          <a class="lib-row" href="#/pelvic-floor">
+            <div class="pcirc"><i class="tri"></i></div>
+            <div class="lr-main">
+              <div class="lr-title">Reducing Tension in Your Pelvic Floor</div>
+              <div class="lr-sub">Deborah Bowes · the longer lesson</div>
+            </div>
+            <span class="lr-dur">45:19</span>
+            <span class="lr-chev">›</span>
+          </a>
+          <a class="lib-row" href="#/session">
+            <div class="pcirc"><i class="tri"></i></div>
+            <div class="lr-main">
+              <div class="lr-title">Ground &amp; Breath — Our Session Practice</div>
+              <div class="lr-sub">Tanner Holman · from our Aug 11 session</div>
+            </div>
+            <span class="lr-dur">32:56</span>
+            <span class="lr-chev">›</span>
+          </a>
+          <p class="lib-hint">Notes you send land in Tanner's inbox.</p>
+        </div>
+
+        <div class="g-watch">
+          <div class="watch">
+            <div class="m-eyebrow quiet">Curious about</div>
+            <ul>
+              <li>The lower belly included in ordinary activity and opening awareness</li>
+              <li>A felt sense of space and power</li>
+              <li>Exploring the territory of the lower belly with kindness and openness, gentle precision</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="g-meta">
+          <div class="watch">
+            <div class="m-eyebrow quiet">Why we vary it</div>
+            <p class="meta-body">This is the broader motor learning context from Claude: "These recordings deliberately revisit the same territory — breath, pelvis, lower belly — in different positions, speeds, and durations. Coming back to the same place along different paths builds retention, and it carries into ordinary activity better than repeating one fixed sequence."</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PELVIC CLOCK ============ -->
+    <section class="view" id="view-pelvic-clock">
+      <div class="lesson">
+        <div class="backrow">
+          <a class="backlink" href="#/">‹ Library</a>
+          <span class="m-eyebrow quiet">Start here</span>
+        </div>
+        <span class="m-chip">Start here</span>
+        <h2 class="m-h2">Pelvic Clock — Connected Spine</h2>
+        <div class="teacher-line">Tanner Holman · 31 min</div>
+        <div class="m-player" data-audio="audio/pelvic-clock.mp3" data-title="Pelvic Clock — Connected Spine" data-dur="31:12"></div>
+        <div class="tags">
+          <div class="tag-group"><span class="tg-label">Position</span><span class="tag-line">supine · knees bent, feet standing</span></div>
+          <div class="tag-group"><span class="tg-label">Focus</span><span class="tag-line">the pelvic clock — 12–6, then 3–9 · movement traveling pelvis ↔ head</span></div>
+          <div class="tag-group"><span class="tg-label">Territory</span><span class="tag-line">sacrum &amp; tailbone · lumbar spine · ribs · sternum · neck &amp; head</span></div>
+        </div>
+        <p class="pull">"Let the pelvis ask a question, and listen for the answer through the spine."</p>
+        <div class="note-card" data-practice="Pelvic Clock — Connected Spine">
+          <div class="m-eyebrow quiet">After practice</div>
+          <p class="prompt">What did you notice?</p>
+          <textarea class="n-box" placeholder="Right side led again; left ribs joined near the end…"></textarea>
+          <div class="send-row">
+            <button class="send">Send to Tanner</button>
+            <span class="helper">Lands in Tanner's inbox — a copy stays here.</span>
+          </div>
+          <div class="note-status" aria-live="polite"></div>
+          <div class="note-history"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PELVIC FLOOR ============ -->
+    <section class="view" id="view-pelvic-floor">
+      <div class="lesson">
+        <div class="backrow">
+          <a class="backlink" href="#/">‹ Library</a>
+          <span class="m-eyebrow quiet">The longer lesson</span>
+        </div>
+        <span class="m-chip">The longer lesson</span>
+        <h2 class="m-h2">Reducing Tension in Your Pelvic Floor</h2>
+        <div class="teacher-line">Deborah Bowes · 45 min</div>
+        <div class="m-player" data-audio="audio/pelvic-floor.mp3" data-title="Reducing Tension in Your Pelvic Floor" data-dur="45:19"></div>
+        <div class="tags">
+          <div class="tag-group"><span class="tg-label">Position</span><span class="tag-line">supine · legs long or knees bent</span></div>
+          <div class="tag-group"><span class="tg-label">Focus</span><span class="tag-line">releasing the pelvic floor · breath through the whole container</span></div>
+          <div class="tag-group"><span class="tg-label">Territory</span><span class="tag-line">pelvic floor · deep abdominals · tailbone &amp; sacrum · lower back · ribs</span></div>
+        </div>
+        <p class="pull">"The pelvic floor doesn't really work alone."</p>
+        <p class="m-body">Take it at whatever pace the day allows; there's no need to finish in one sitting.</p>
+        <div class="note-card" data-practice="Reducing Tension in Your Pelvic Floor">
+          <div class="m-eyebrow quiet">After practice</div>
+          <p class="prompt">What did you notice?</p>
+          <textarea class="n-box" placeholder="Right side led again; left ribs joined near the end…"></textarea>
+          <div class="send-row">
+            <button class="send">Send to Tanner</button>
+            <span class="helper">Lands in Tanner's inbox — a copy stays here.</span>
+          </div>
+          <div class="note-status" aria-live="polite"></div>
+          <div class="note-history"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SESSION PRACTICE ============ -->
+    <section class="view" id="view-session">
+      <div class="lesson">
+        <div class="backrow">
+          <a class="backlink" href="#/">‹ Library</a>
+          <span class="m-eyebrow quiet">From our session</span>
+        </div>
+        <span class="m-chip">From our session</span>
+        <h2 class="m-h2">Ground &amp; Breath — Our Session Practice</h2>
+        <div class="teacher-line">Tanner Holman · from our Aug 11 session</div>
+        <div class="m-player" data-audio="audio/session-practice.mp3" data-title="Ground &amp; Breath — Our Session Practice" data-dur="32:56"></div>
+        <div class="tags">
+          <div class="tag-group"><span class="tg-label">Position</span><span class="tag-line">standing → supine</span></div>
+          <div class="tag-group"><span class="tg-label">Focus</span><span class="tag-line">natural breath · support from the ground · right–left difference</span></div>
+          <div class="tag-group"><span class="tg-label">Territory</span><span class="tag-line">back ribs · diaphragm · collarbones · sternum · lower belly</span></div>
+        </div>
+        <p class="pull">"Allow yourself to relax into the generosity of the ground."</p>
+        <p class="m-body">The practice from our session, as we did it. Your responses are trimmed out, but the time they took is left in as open space — the same pauses, now yours to reflect in.</p>
+        <div class="note-card" data-practice="Ground &amp; Breath — Our Session Practice">
+          <div class="m-eyebrow quiet">After practice</div>
+          <p class="prompt">What did you notice?</p>
+          <textarea class="n-box" placeholder="Right side led again; left ribs joined near the end…"></textarea>
+          <div class="send-row">
+            <button class="send">Send to Tanner</button>
+            <span class="helper">Lands in Tanner's inbox — a copy stays here.</span>
+          </div>
+          <div class="note-status" aria-live="polite"></div>
+          <div class="note-history"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* ---------- routing ---------- */
+    var VIEWS = ["home", "pelvic-clock", "pelvic-floor", "session"];
+    function route(){
+      var h = (location.hash || "#/").replace(/^#\/?/, "");
+      var id = VIEWS.indexOf(h) >= 0 ? h : "home";
+      document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("on"); });
+      document.getElementById("view-" + id).classList.add("on");
+      document.querySelectorAll("audio").forEach(function(a){
+        if (!a.closest(".view").classList.contains("on")) a.pause();
+      });
+      window.scrollTo(0, 0);
+    }
+    window.addEventListener("hashchange", route);
+
+    /* ---------- players ---------- */
+    var fmt = function(s){ s = Math.max(0, Math.floor(s || 0));
+      return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+    var PLAY = '<i class="tri"></i>';
+    var PAUSE = '<div class="bars"><i></i><i></i></div>';
+
+    document.querySelectorAll(".m-player[data-audio]").forEach(function(p){
+      p.innerHTML =
+        '<audio src="' + p.dataset.audio + '" preload="metadata"></audio>' +
+        '<button class="playbtn" aria-label="Play">' + PLAY + '</button>' +
+        '<div class="pm">' +
+          '<div class="now">Now playing</div>' +
+          '<div class="ptitle">' + p.dataset.title + '</div>' +
+          '<div class="scrub">' +
+            '<div class="ptrack"><div class="pfill"></div><div class="knob"></div></div>' +
+            '<span class="ptime">0:00 / ' + p.dataset.dur + '</span>' +
+          '</div>' +
+        '</div>';
+      var audio = p.querySelector("audio"), btn = p.querySelector(".playbtn"),
+          fill = p.querySelector(".pfill"), knob = p.querySelector(".knob"),
+          time = p.querySelector(".ptime"), track = p.querySelector(".ptrack");
+      function paint(){
+        var d = audio.duration || 0, pct = d ? (audio.currentTime / d) * 100 : 0;
+        fill.style.width = pct + "%"; knob.style.left = pct + "%";
+        time.textContent = fmt(audio.currentTime) + " / " + (d ? fmt(d) : p.dataset.dur);
+      }
+      // resume long lessons where they were left off
+      var posKey = "maxpos-" + p.dataset.audio;
+      audio.addEventListener("loadedmetadata", function(){
+        var t = parseFloat(localStorage.getItem(posKey)) || 0;
+        if (t > 30 && audio.duration && t < audio.duration - 60) audio.currentTime = t;
+        paint();
+      });
+      audio.addEventListener("timeupdate", function(){
+        if (!audio.paused) {
+          try { localStorage.setItem(posKey, String(Math.floor(audio.currentTime))); } catch(e){}
+        }
+        paint();
+      });
+      audio.addEventListener("ended", function(){
+        try { localStorage.removeItem(posKey); } catch(e){}
+      });
+      audio.addEventListener("play",  function(){ btn.innerHTML = PAUSE; btn.setAttribute("aria-label","Pause"); });
+      audio.addEventListener("pause", function(){ btn.innerHTML = PLAY;  btn.setAttribute("aria-label","Play"); });
+      audio.addEventListener("ended", function(){ btn.innerHTML = PLAY; });
+      btn.addEventListener("click", function(){ audio.paused ? audio.play() : audio.pause(); });
+      track.addEventListener("click", function(e){
+        var r = track.getBoundingClientRect();
+        var ratio = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+        if (audio.duration) audio.currentTime = ratio * audio.duration;
+      });
+    });
+
+    /* ---------- notes → Tanner (FormSubmit AJAX) ---------- */
+    var ENDPOINT = "https://formsubmit.co/ajax/e5140376f99018c5113aaaa81b550434";
+    function nsKey(practice){ return "maxnotes-" + practice.toLowerCase().replace(/[^a-z]+/g, "-"); }
+    function loadNotes(practice){
+      try { return JSON.parse(localStorage.getItem(nsKey(practice)) || "[]"); }
+      catch(e){ return []; }
+    }
+    function fmtDate(t){
+      var d = new Date(t);
+      return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    }
+
+    document.querySelectorAll(".note-card").forEach(function(card){
+      var practice = card.dataset.practice;
+      var box = card.querySelector(".n-box"), send = card.querySelector(".send"),
+          status = card.querySelector(".note-status"), history = card.querySelector(".note-history");
+
+      function renderHistory(){
+        var notes = loadNotes(practice).slice(-3).reverse();
+        history.innerHTML = notes.map(function(n){
+          return '<div class="nh-item"><div class="nh-date">Sent ' + fmtDate(n.t) +
+                 ' ✓</div><p class="nh-text"></p></div>';
+        }).join("");
+        history.querySelectorAll(".nh-text").forEach(function(el, i){ el.textContent = notes[i].note; });
+        history.style.display = notes.length ? "block" : "none";
+      }
+      renderHistory();
+
+      send.addEventListener("click", function(){
+        var text = box.value.trim();
+        if (!text) { status.textContent = "Write a note first — even one line is plenty."; return; }
+        send.disabled = true; status.classList.remove("err"); status.textContent = "Sending…";
+        fetch(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({
+            _subject: "Max dashboard — note after " + practice,
+            practice: practice,
+            note: text
+          })
+        }).then(function(r){
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        }).then(function(){
+          var notes = loadNotes(practice);
+          notes.push({ t: Date.now(), note: text });
+          try { localStorage.setItem(nsKey(practice), JSON.stringify(notes)); } catch(e){}
+          box.value = "";
+          status.textContent = "Sent to Tanner ✓";
+          renderHistory();
+          send.disabled = false;
+        }).catch(function(){
+          status.classList.add("err");
+          status.textContent = "Couldn't send just now — your note is still here. Try again in a moment.";
+          send.disabled = false;
+        });
+      });
+    });
+
+    route();
+
+    /* ---------- PWA ---------- */
+    if ("serviceWorker" in navigator && location.protocol === "https:") {
+      navigator.serviceWorker.register("sw.js");
+    }
+  </script>
+</body>
+</html>
