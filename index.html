@@ -15,7 +15,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* Self-contained — Straight Port chassis on the course's tokens. */
+    /* Self-contained — Strata variant: practice pages as one continuous composition,
+       horizontal strata separated by hairlines; fills only where they mean something. */
     :root{
       --clay:#B5613F; --clay-hover:#A4542F; --ink:#2A2520;
       --sand:#F1E7D8; --paper:#FBF7EF; --hair:#ECE3D3; --hair2:#D8C9B3; --hair-sand:#E3D3BA;
@@ -102,21 +103,26 @@
     .watch li{font:400 13.5px/1.55 var(--serif);color:var(--body2);margin:5px 0;}
     .watch .meta-body{font:400 13.5px/1.6 var(--serif);color:var(--body2);margin:9px 0 0;}
 
-    /* practice pages */
-    .lesson{padding:26px 26px 46px;max-width:620px;margin:0 auto;}
-    @media (min-width:760px){ .lesson{padding:44px 26px 56px;} }
-    .backrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
-    .backlink{font:400 13.5px/1 var(--sans);color:#9C8F7E;padding:4px 0;}
+    /* ---------- practice pages · strata ---------- */
+    .lesson{padding:26px 26px 54px;max-width:620px;margin:0 auto;}
+    @media (min-width:760px){ .lesson{padding:46px 26px 64px;max-width:660px;} }
+
+    .backrow{margin-bottom:30px;}
+    .backlink{font:400 13.5px/1 var(--sans);color:#9C8F7E;padding:4px 0;display:inline-block;}
     .backlink:hover{color:var(--clay);}
-    .m-chip{display:inline-block;font:600 9.5px/1 var(--sans);letter-spacing:.14em;
-      text-transform:uppercase;color:var(--clay);border:1px solid #DDBFA9;border-radius:999px;
-      padding:4px 9px;}
-    .m-h2{font:600 25px/1.18 var(--serif);color:var(--ink);margin:14px 0 0;}
-    .teacher-line{font:400 13px/1.5 var(--sans);color:#9C8F7E;margin-top:6px;}
-    .m-player{background:var(--ink);border-radius:16px;padding:14px 16px;display:flex;
-      align-items:center;gap:13px;margin-top:18px;}
+
+    /* title stratum — micro-labels share one voice: 600 10px / .18em tracking */
+    .l-eyebrow{display:block;font:600 10px/1 var(--sans);letter-spacing:.18em;
+      text-transform:uppercase;color:var(--clay);}
+    .m-h2{font:600 27px/1.16 var(--serif);color:var(--ink);margin:11px 0 0;letter-spacing:-.005em;}
+    @media (min-width:760px){ .m-h2{font-size:30px;} }
+    .teacher-line{font:400 13px/1.5 var(--sans);color:#9C8F7E;margin-top:8px;}
+
+    /* player — the one dark fill on the page */
+    .m-player{background:var(--ink);border-radius:14px;padding:14px 16px;display:flex;
+      align-items:center;gap:13px;margin-top:24px;}
     .playbtn{width:46px;height:46px;border-radius:50%;background:var(--clay);flex:0 0 auto;
-      display:flex;align-items:center;justify-content:center;box-shadow:0 4px 13px rgba(181,97,63,.4);}
+      display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(181,97,63,.26);}
     .playbtn:hover{background:var(--clay-hover);}
     .playbtn:focus-visible{outline:2px solid var(--paper);outline-offset:2px;}
     .playbtn .tri{width:0;height:0;border-left:14px solid #fff;border-top:9px solid transparent;
@@ -124,7 +130,7 @@
     .playbtn .bars{display:flex;gap:4px;}
     .playbtn .bars i{width:4.5px;height:17px;background:#fff;border-radius:2px;display:block;}
     .pm{flex:1;min-width:0;}
-    .pm .now{font:600 9px/1 var(--sans);letter-spacing:.14em;color:#C69A78;
+    .pm .now{font:600 10px/1 var(--sans);letter-spacing:.18em;color:#C69A78;
       text-transform:uppercase;margin-bottom:5px;}
     .pm .ptitle{font:600 15px/1.25 var(--serif);color:#F6ECDC;white-space:nowrap;overflow:hidden;
       text-overflow:ellipsis;}
@@ -134,23 +140,38 @@
     .knob{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:11px;height:11px;
       border-radius:50%;background:#F6ECDC;}
     .ptime{font:500 10px/1 var(--mono);color:#C69A78;flex:0 0 auto;}
-    .m-body{font:400 15.5px/1.75 var(--serif);color:var(--body);margin:20px 0 0;}
-    .tags{margin:20px 0 0;display:flex;flex-direction:column;gap:9px;}
-    .tag-group{display:flex;align-items:center;gap:11px;}
-    .tg-label{font:600 9.5px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;
-      color:var(--faint);flex:0 0 72px;text-align:right;}
-    .tag-line{font:500 12.5px/1.6 var(--sans);color:var(--body2);background:var(--sand);
-      border-radius:999px;padding:6px 13px;}
-    .pull{font:italic 400 14.5px/1.6 var(--serif);color:var(--sec);margin:16px 0 0;
-      padding-left:12px;border-left:2px solid var(--hair2);}
-    .note-card{background:var(--sand);border-radius:14px;padding:16px 18px;margin-top:24px;}
-    .note-card .prompt{font:500 14.5px/1.4 var(--sans);color:var(--body);margin:8px 0 0;}
+
+    /* orientation stratum — inline runs, no fills */
+    .orient{margin-top:30px;border-top:1px solid var(--hair2);border-bottom:1px solid var(--hair2);
+      padding:19px 0 21px;}
+    .o-row{margin:14px 0 0;font:400 15px/1.62 var(--serif);color:var(--body);
+      display:grid;grid-template-columns:max-content 1fr;align-items:baseline;}
+    .o-row:first-child{margin-top:0;}
+    .o-label{font:600 10px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;
+      color:var(--eyebrow);}
+    .o-label::after{content:"\2013";color:var(--faint3);margin:0 11px 0 10px;font-weight:400;
+      letter-spacing:0;}
+    @media (min-width:760px){
+      .orient{padding:22px 0 24px;}
+      .o-row{font-size:15.5px;}
+    }
+
+    /* quote stratum — anchored between rules */
+    .pull{font:italic 500 18px/1.55 var(--serif);color:var(--body2);margin:0;
+      text-align:center;padding:28px 26px;border-bottom:1px solid var(--hair2);text-wrap:balance;}
+    @media (min-width:760px){ .pull{font-size:19.5px;padding:32px 72px;} }
+
+    .m-body{font:400 15px/1.7 var(--serif);color:var(--body2);margin:24px 0 0;}
+
+    /* note stratum — the only sand card */
+    .note-card{background:var(--sand);border-radius:14px;padding:20px 20px 18px;margin-top:32px;}
+    .note-card .prompt{font:500 17px/1.35 var(--serif);color:var(--ink);margin:9px 0 0;}
     .n-box{display:block;width:100%;background:var(--paper);border:1px solid var(--hair-sand);
-      border-radius:10px;padding:12px 13px;min-height:84px;margin-top:10px;resize:vertical;
+      border-radius:10px;padding:12px 13px;min-height:84px;margin-top:12px;resize:vertical;
       font:400 14px/1.6 var(--serif);color:var(--body);}
     .n-box::placeholder{font-style:italic;color:var(--faint);}
     .n-box:focus{outline:2px solid rgba(181,97,63,.5);outline-offset:1px;}
-    .send-row{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .send-row{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap;}
     .send{display:inline-block;background:var(--clay);color:#FFF8EE;font:600 13px/1 var(--sans);
       padding:11px 18px;border-radius:999px;}
     .send:hover{background:var(--clay-hover);}
@@ -246,16 +267,15 @@
       <div class="lesson">
         <div class="backrow">
           <a class="backlink" href="#/">‹ Library</a>
-          <span class="m-eyebrow quiet">Start here</span>
         </div>
-        <span class="m-chip">Start here</span>
+        <span class="l-eyebrow">Start here</span>
         <h2 class="m-h2">Pelvic Clock — Connected Spine</h2>
         <div class="teacher-line">Tanner Holman · 31 min</div>
         <div class="m-player" data-audio="audio/pelvic-clock.mp3" data-title="Pelvic Clock — Connected Spine" data-dur="31:12"></div>
-        <div class="tags">
-          <div class="tag-group"><span class="tg-label">Position</span><span class="tag-line">supine · knees bent, feet standing</span></div>
-          <div class="tag-group"><span class="tg-label">Focus</span><span class="tag-line">the pelvic clock — 12–6, then 3–9 · movement traveling pelvis ↔ head</span></div>
-          <div class="tag-group"><span class="tg-label">Territory</span><span class="tag-line">sacrum &amp; tailbone · lumbar spine · ribs · sternum · neck &amp; head</span></div>
+        <div class="orient">
+          <p class="o-row"><span class="o-label">Position</span><span class="o-terms">supine · knees bent, feet standing</span></p>
+          <p class="o-row"><span class="o-label">Focus</span><span class="o-terms">the pelvic clock — 12–6, then 3–9 · movement traveling pelvis ↔ head</span></p>
+          <p class="o-row"><span class="o-label">Territory</span><span class="o-terms">sacrum &amp; tailbone · lumbar spine · ribs · sternum · neck &amp; head</span></p>
         </div>
         <p class="pull">"Let the pelvis ask a question, and listen for the answer through the spine."</p>
         <div class="note-card" data-practice="Pelvic Clock — Connected Spine">
@@ -277,16 +297,15 @@
       <div class="lesson">
         <div class="backrow">
           <a class="backlink" href="#/">‹ Library</a>
-          <span class="m-eyebrow quiet">The longer lesson</span>
         </div>
-        <span class="m-chip">The longer lesson</span>
+        <span class="l-eyebrow">The longer lesson</span>
         <h2 class="m-h2">Reducing Tension in Your Pelvic Floor</h2>
         <div class="teacher-line">Deborah Bowes · 45 min</div>
         <div class="m-player" data-audio="audio/pelvic-floor.mp3" data-title="Reducing Tension in Your Pelvic Floor" data-dur="45:19"></div>
-        <div class="tags">
-          <div class="tag-group"><span class="tg-label">Position</span><span class="tag-line">supine · legs long or knees bent</span></div>
-          <div class="tag-group"><span class="tg-label">Focus</span><span class="tag-line">releasing the pelvic floor · breath through the whole container</span></div>
-          <div class="tag-group"><span class="tg-label">Territory</span><span class="tag-line">pelvic floor · deep abdominals · tailbone &amp; sacrum · lower back · ribs</span></div>
+        <div class="orient">
+          <p class="o-row"><span class="o-label">Position</span><span class="o-terms">supine · legs long or knees bent</span></p>
+          <p class="o-row"><span class="o-label">Focus</span><span class="o-terms">releasing the pelvic floor · breath through the whole container</span></p>
+          <p class="o-row"><span class="o-label">Territory</span><span class="o-terms">pelvic floor · deep abdominals · tailbone &amp; sacrum · lower back · ribs</span></p>
         </div>
         <p class="pull">"The pelvic floor doesn't really work alone."</p>
         <p class="m-body">Take it at whatever pace the day allows; there's no need to finish in one sitting.</p>
@@ -309,16 +328,15 @@
       <div class="lesson">
         <div class="backrow">
           <a class="backlink" href="#/">‹ Library</a>
-          <span class="m-eyebrow quiet">From our session</span>
         </div>
-        <span class="m-chip">From our session</span>
+        <span class="l-eyebrow">From our session</span>
         <h2 class="m-h2">Ground &amp; Breath — Our Session Practice</h2>
         <div class="teacher-line">Tanner Holman · from our Aug 11 session</div>
         <div class="m-player" data-audio="audio/session-practice.mp3" data-title="Ground &amp; Breath — Our Session Practice" data-dur="32:56"></div>
-        <div class="tags">
-          <div class="tag-group"><span class="tg-label">Position</span><span class="tag-line">standing → supine</span></div>
-          <div class="tag-group"><span class="tg-label">Focus</span><span class="tag-line">natural breath · support from the ground · right–left difference</span></div>
-          <div class="tag-group"><span class="tg-label">Territory</span><span class="tag-line">back ribs · diaphragm · collarbones · sternum · lower belly</span></div>
+        <div class="orient">
+          <p class="o-row"><span class="o-label">Position</span><span class="o-terms">standing → supine</span></p>
+          <p class="o-row"><span class="o-label">Focus</span><span class="o-terms">natural breath · support from the ground · right–left difference</span></p>
+          <p class="o-row"><span class="o-label">Territory</span><span class="o-terms">back ribs · diaphragm · collarbones · sternum · lower belly</span></p>
         </div>
         <p class="pull">"Allow yourself to relax into the generosity of the ground."</p>
         <p class="m-body">The practice from our session, as we did it. Your responses are trimmed out, but the time they took is left in as open space — the same pauses, now yours to reflect in.</p>
