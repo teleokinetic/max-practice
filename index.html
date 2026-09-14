@@ -4,625 +4,917 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
-  <title>For Max · Practice Dashboard</title>
-  <meta name="theme-color" content="#EFE6D6">
+  <title>Max's Practice Map</title>
+  <meta name="theme-color" content="#FAF7F1">
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png" type="image/png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="For Max">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta name="apple-mobile-web-app-title" content="Practice Map">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    /* Self-contained — Strata variant: practice pages as one continuous composition,
-       horizontal strata separated by hairlines; fills only where they mean something. */
-    :root{
-      --clay:#B5613F; --clay-hover:#A4542F; --ink:#2A2520;
-      --sand:#F1E7D8; --paper:#FBF7EF; --hair:#ECE3D3; --hair2:#D8C9B3; --hair-sand:#E3D3BA;
-      --body:#3A352E; --body2:#5A5249; --sec:#6A6056; --mut:#8A8076; --mut2:#9C7A4E;
-      --faint:#B3A48D; --faint2:#BBAE9B; --faint3:#C2B5A1; --eyebrow:#A89A86;
-      --serif:'Spectral',Georgia,serif;
-      --sans:'Hanken Grotesk',system-ui,sans-serif;
-      --mono:'Spline Sans Mono',ui-monospace,monospace;
-    }
-    *{box-sizing:border-box;}
-    html,body{margin:0;}
-    body{background:#EFE6D6;color:var(--body);font-family:var(--sans);
-      -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
-    button{font-family:inherit;cursor:pointer;border:none;background:none;}
-    a{color:inherit;text-decoration:none;}
-
-    .screen{background:var(--paper);min-height:100vh;
-      padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
-    @media (min-width:760px){
-      body{padding:36px 0 44px;}
-      .screen{max-width:1010px;margin:0 auto;min-height:auto;border-radius:18px;
-        box-shadow:0 6px 26px rgba(60,45,25,.13);overflow:hidden;}
-    }
-    .topbar{display:none;align-items:center;justify-content:space-between;
-      padding:24px 52px;border-bottom:1px solid var(--hair);}
-    .wordmark{font:600 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--clay);}
-    .topright{font:500 13px/1 var(--sans);color:var(--eyebrow);}
-    @media (min-width:760px){ .topbar{display:flex;} }
-
-    .view{display:none;}
-    .view.on{display:block;}
-
-    .m-eyebrow{font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--clay);}
-    .m-eyebrow.quiet{color:var(--eyebrow);letter-spacing:.18em;}
-
-    /* home */
-    .home-grid{display:grid;grid-template-areas:"head" "lib" "watch" "meta";padding:30px 26px 40px;
-      column-gap:64px;}
-    .g-head{grid-area:head;} .g-lib{grid-area:lib;} .g-watch{grid-area:watch;} .g-meta{grid-area:meta;}
-    @media (min-width:760px){
-      .home-grid{grid-template-columns:330px minmax(0,1fr);
-        grid-template-areas:"head lib" "watch lib" "watch meta";
-        grid-template-rows:auto 1fr auto;padding:46px 52px 56px;}
-      .g-head .m-eyebrow.formax{display:none;}
-      .lib-row{padding:19px 0;}
-      .lr-title{font-size:17px;}
-      .lr-sub{font-size:12.5px;margin-top:3px;}
-      .pcirc{width:34px;height:34px;}
-    }
-    .m-h1{font:600 30px/1.12 var(--serif);color:var(--ink);margin:10px 0 0;}
-    @media (min-width:760px){ .m-h1{font-size:34px;margin-top:0;} }
-    .m-one{font:italic 400 15.5px/1.55 var(--serif);color:var(--sec);margin:9px 0 0;}
-    .rhythm{background:var(--sand);border-radius:14px;padding:14px 17px;display:flex;gap:13px;
-      align-items:flex-start;margin-top:18px;}
-    .dots{display:flex;gap:6px;align-items:center;flex:0 0 auto;padding-top:4px;}
-    .dot{width:10px;height:10px;border:1.5px solid var(--clay);border-radius:50%;}
-    .dot.fill{background:var(--clay);}
-    .dot.big{width:15px;height:15px;}
-    .rhythm-text{flex:1;min-width:0;}
-    .rhythm p{margin:0;font:400 13px/1.55 var(--sans);color:var(--body2);}
-    .rhythm p.rest{margin-top:9px;padding-top:9px;border-top:1px solid var(--hair-sand);
-      color:var(--sec);}
-
-    .lib-head{margin:26px 0 4px;}
-    @media (min-width:760px){ .lib-head{margin-top:6px;} }
-    .lib-row{display:flex;align-items:center;gap:13px;padding:15px 0;border-top:1px solid var(--hair);
-      width:100%;text-align:left;}
-    .lib-row:first-of-type{border-top:none;}
-    .lib-row:hover .lr-title{color:var(--clay);}
-    .lib-row:focus-visible{outline:2px solid var(--clay);outline-offset:3px;border-radius:6px;}
-    .pcirc{width:30px;height:30px;border-radius:50%;border:1px solid var(--hair2);flex:0 0 auto;
-      display:flex;align-items:center;justify-content:center;}
-    .pcirc .tri{width:0;height:0;border-left:9px solid var(--faint);border-top:5.5px solid transparent;
-      border-bottom:5.5px solid transparent;margin-left:2px;}
-    .lr-main{flex:1;min-width:0;}
-    .lr-title{font:500 15.5px/1.3 var(--serif);color:var(--body);}
-    .lr-sub{font:400 12px/1.5 var(--sans);color:#9C8F7E;margin-top:2px;}
-    .lr-dur{font:500 11px/1 var(--mono);color:var(--faint);flex:0 0 auto;}
-    .lr-chev{color:var(--faint3);font-size:15px;padding:0 2px;}
-    .lr-when{font:400 12px/1.5 var(--sans);color:var(--body2);margin-top:3px;display:none;}
-    .lib-hint{font:400 12px/1.5 var(--sans);color:var(--eyebrow);margin-top:18px;}
-
-    .watch{background:var(--sand);border-radius:14px;padding:15px 18px;margin-top:22px;}
-    .watch ul{margin:9px 0 0;padding-left:17px;}
-    .watch li{font:400 13.5px/1.55 var(--serif);color:var(--body2);margin:5px 0;}
-    .watch .meta-body{font:400 13.5px/1.6 var(--serif);color:var(--body2);margin:9px 0 0;}
-
-    /* ---------- practice pages · strata ---------- */
-    .lesson{padding:26px 26px 54px;max-width:620px;margin:0 auto;}
-    @media (min-width:760px){ .lesson{padding:46px 26px 64px;max-width:660px;} }
-
-    .backrow{margin-bottom:30px;}
-    .backlink{font:400 13.5px/1 var(--sans);color:#9C8F7E;padding:4px 0;display:inline-block;}
-    .backlink:hover{color:var(--clay);}
-
-    /* title stratum — micro-labels share one voice: 600 10px / .18em tracking */
-    .l-eyebrow{display:block;font:600 10px/1 var(--sans);letter-spacing:.18em;
-      text-transform:uppercase;color:var(--clay);}
-    .m-h2{font:600 27px/1.16 var(--serif);color:var(--ink);margin:11px 0 0;letter-spacing:-.005em;}
-    @media (min-width:760px){ .m-h2{font-size:30px;} }
-    .teacher-line{font:400 13px/1.5 var(--sans);color:#9C8F7E;margin-top:8px;}
-
-    /* player — the one dark fill on the page */
-    .m-player{background:var(--ink);border-radius:14px;padding:14px 16px;display:flex;
-      align-items:center;gap:13px;margin-top:24px;}
-    .playbtn{width:46px;height:46px;border-radius:50%;background:var(--clay);flex:0 0 auto;
-      display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(181,97,63,.26);}
-    .playbtn:hover{background:var(--clay-hover);}
-    .playbtn:focus-visible{outline:2px solid var(--paper);outline-offset:2px;}
-    .playbtn .tri{width:0;height:0;border-left:14px solid #fff;border-top:9px solid transparent;
-      border-bottom:9px solid transparent;margin-left:3px;}
-    .playbtn .bars{display:flex;gap:4px;}
-    .playbtn .bars i{width:4.5px;height:17px;background:#fff;border-radius:2px;display:block;}
-    .pm{flex:1;min-width:0;}
-    .pm .now{font:600 10px/1 var(--sans);letter-spacing:.18em;color:#C69A78;
-      text-transform:uppercase;margin-bottom:5px;}
-    .pm .ptitle{font:600 15px/1.25 var(--serif);color:#F6ECDC;white-space:nowrap;overflow:hidden;
-      text-overflow:ellipsis;}
-    .scrub{display:flex;align-items:center;gap:8px;margin-top:8px;}
-    .ptrack{flex:1;height:5px;border-radius:2px;background:#4A3F35;position:relative;cursor:pointer;}
-    .pfill{width:0;height:100%;border-radius:2px;background:var(--clay);}
-    .knob{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:11px;height:11px;
-      border-radius:50%;background:#F6ECDC;}
-    .ptime{font:500 10px/1 var(--mono);color:#C69A78;flex:0 0 auto;}
-
-    /* orientation stratum — inline runs, no fills */
-    .orient{margin-top:30px;border-top:1px solid var(--hair2);border-bottom:1px solid var(--hair2);
-      padding:19px 0 21px;}
-    .o-row{margin:14px 0 0;font:400 15px/1.62 var(--serif);color:var(--body);
-      display:grid;grid-template-columns:max-content 1fr;align-items:baseline;}
-    .o-row:first-child{margin-top:0;}
-    .o-label{font:600 10px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;
-      color:var(--eyebrow);}
-    .o-label::after{content:"\2013";color:var(--faint3);margin:0 11px 0 10px;font-weight:400;
-      letter-spacing:0;}
-    @media (min-width:760px){
-      .orient{padding:22px 0 24px;}
-      .o-row{font-size:15.5px;}
-    }
-
-    /* quote stratum — anchored between rules */
-    .pull{font:italic 500 18px/1.55 var(--serif);color:var(--body2);margin:0;
-      text-align:center;padding:28px 26px;border-bottom:1px solid var(--hair2);text-wrap:balance;}
-    @media (min-width:760px){ .pull{font-size:19.5px;padding:32px 72px;} }
-
-    .m-body{font:400 15px/1.7 var(--serif);color:var(--body2);margin:24px 0 0;}
-    .last-line{font:400 13px/1.5 var(--sans);color:var(--sec);margin:14px 0 0;display:none;}
-    .mark-line{display:block;margin:20px 0 0;font:400 12px/1.5 var(--sans);color:var(--mut);
-      padding:2px 0;border-bottom:1px dotted var(--faint2);cursor:pointer;}
-    .mark-line.done{border-bottom-color:transparent;color:var(--mut2);cursor:default;}
-
-    /* note stratum — the only sand card */
-    .note-card{background:var(--sand);border-radius:14px;padding:20px 20px 18px;margin-top:32px;}
-    .note-card .prompt{font:500 17px/1.35 var(--serif);color:var(--ink);margin:9px 0 0;}
-    .n-box{display:block;width:100%;background:var(--paper);border:1px solid var(--hair-sand);
-      border-radius:10px;padding:12px 13px;min-height:84px;margin-top:12px;resize:vertical;
-      font:400 14px/1.6 var(--serif);color:var(--body);}
-    .n-box::placeholder{font-style:italic;color:var(--faint);}
-    .n-box:focus{outline:2px solid rgba(181,97,63,.5);outline-offset:1px;}
-    .send-row{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap;}
-    .send{display:inline-block;background:var(--clay);color:#FFF8EE;font:600 13px/1 var(--sans);
-      padding:11px 18px;border-radius:999px;}
-    .send:hover{background:var(--clay-hover);}
-    .send:focus-visible{outline:2px solid var(--clay);outline-offset:3px;}
-    .send[disabled]{opacity:.55;cursor:default;}
-    .helper{font:400 11.5px/1.45 var(--sans);color:var(--mut);flex:1;min-width:180px;}
-    .note-status{font:600 12px/1.5 var(--sans);color:var(--mut2);margin-top:10px;min-height:18px;}
-    .note-status.err{color:#8A4B2F;}
-    .note-history{margin-top:14px;border-top:1px solid var(--hair-sand);padding-top:12px;}
-    .note-history .nh-item{margin:0 0 10px;}
-    .note-history .nh-date{font:600 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
-      color:#9C8F7E;}
-    .note-history .nh-text{font:400 13.5px/1.55 var(--serif);color:var(--body2);margin:4px 0 0;}
-  </style>
 </head>
 <body>
-  <main class="screen">
-    <div class="topbar">
-      <span class="wordmark">For Max</span>
-      <span class="topright">Practice dashboard</span>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* ---- 1. tokens (Practice Map paper palette; Max's accent = deep clay, carried over from his first dashboard) ---- */
+:root {
+  color-scheme: light;
+  --bg:#FAF7F1; --raised:#F1EBDE; --raised-2:#E9E1CF; --card:#FFFDF9;
+  --text:#2E2A24; --head:#3A2C24; --soft:#4A463E; --muted:#665F51;
+  --accent:#8F4626; --accent-hover:#7C3B1F; --wash:rgba(143,70,38,.10); --wash-2:rgba(143,70,38,.16); --danger:#8A3B2E;
+  --rule:#E3DBCB; --rule-strong:#CBC1AC; --ink:#FBF9F4;
+  --display:"Newsreader","Iowan Old Style",Palatino,Georgia,serif;
+  --serif:"Source Serif 4",Georgia,serif;
+  --sans:"Source Sans 3","Helvetica Neue",Arial,system-ui,sans-serif;
+  --r:20px; --r-hero:24px; --r-in:14px; --col:480px;
+  --edge: max(16px, calc((100% - var(--col)) / 2 + 16px));
+}
+
+/* ---- 2. base ---- */
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+html, body { background: var(--bg); }
+body { margin: 0; color: var(--text); font: 400 17px/1.5 var(--serif); -webkit-font-smoothing: antialiased; min-height: 100dvh; }
+a { color: var(--accent); }
+::selection { background: var(--accent); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+button { -webkit-tap-highlight-color: transparent; font: inherit; color: inherit; }
+main { max-width: var(--col); margin: 0 auto; padding: calc(14px + env(safe-area-inset-top, 0px)) 16px calc(28px + env(safe-area-inset-bottom, 0px)); }
+artifact-local { display: contents; }
+.screen { display: none; }
+.screen[data-local-active] { display: block; }
+
+/* ---- 3. shared pieces ---- */
+.lbl { margin: 0; font: 600 13px/1.3 var(--sans); color: var(--accent); }
+.topbar { display: flex; align-items: center; justify-content: space-between; min-height: 44px; margin-bottom: 14px; padding-right: 56px; }
+.wordmark { font: 400 22px/1.1 var(--display); color: var(--accent); }
+.back { border: 0; background: none; cursor: pointer; min-height: 44px; padding: 0 12px 0 0; display: inline-flex; align-items: center; font: 600 15px/1 var(--sans); color: var(--accent); }
+.stitle { font: 400 30px/1.1 var(--display); color: var(--head); margin: 0 0 4px; text-wrap: balance; }
+.sintro { margin: 0 0 14px; font: 15px/1.4 var(--sans); color: var(--muted); }
+.footnote { margin: 14px 0 0; font: 15px/1.4 var(--sans); color: var(--muted); }
+.card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--r); padding: 16px; }
+.soft { background: var(--raised); border: 0; }
+/* buttons: filled pill · outline pill · wash pill · bare */
+.send { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--accent); color: var(--ink); font: 700 15px/1 var(--sans); cursor: pointer; transition: background .15s ease; }
+.send[disabled] { opacity: .55; cursor: default; }
+.ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 16px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--card); color: var(--accent); font: 600 15px/1 var(--sans); cursor: pointer; }
+.pillbtn { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wash); color: var(--accent); font: 600 15px/1 var(--sans); cursor: pointer; }
+.reset { border: 0; background: none; cursor: pointer; min-height: 44px; padding: 0 0 0 12px; display: inline-flex; align-items: center; font: 600 13px/1 var(--sans); color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.nstatus { font: 15px/1.4 var(--sans); color: var(--muted); }
+.nstatus.err { color: var(--danger); font-weight: 600; }
+p.nstatus { margin: 8px 0 0; }
+.chip { display: inline-block; font: 600 12px/1.3 var(--sans); color: var(--muted); background: var(--raised); border-radius: 999px; padding: 3px 10px; }
+
+/* ---- 4. quick note: round + button top-right on every screen, sheet drops under it ---- */
+#fab { position: fixed; z-index: 30; top: calc(14px + env(safe-area-inset-top, 0px)); right: var(--edge); width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--wash); color: var(--accent); display: grid; place-items: center; cursor: pointer; transition: background .15s ease; }
+#fab svg { stroke: currentColor; }
+#sheet { position: fixed; z-index: 31; top: calc(66px + env(safe-area-inset-top, 0px)); right: var(--edge); left: var(--edge); max-width: 448px; margin-left: auto; background: var(--card); border: 1px solid var(--rule); border-radius: var(--r); padding: 16px; box-shadow: 0 1px 2px rgba(46,42,36,.08), 0 12px 32px rgba(46,42,36,.14); max-height: calc(100dvh - 90px); overflow: auto; }
+#sheet .lbl { margin-bottom: 8px; }
+#sheet textarea { width: 100%; min-height: 6rem; max-height: 30dvh; resize: vertical; font: 17px/1.5 var(--serif); color: var(--text); background: var(--bg); border: 1px solid var(--rule-strong); border-radius: var(--r-in); padding: 10px 12px; }
+#sheet .rowb { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+body[data-local-edit] #fab, body[data-local-edit] #sheet { display: none; }
+
+/* ---- 5. edit bar (Tanner: open with #edit) ---- */
+#editbar { display: none; position: sticky; top: 0; z-index: 25; align-items: center; gap: 8px 12px; flex-wrap: wrap; padding: calc(8px + env(safe-area-inset-top, 0px)) var(--edge) 8px; background: rgba(250,247,241,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); font: 13px/1.4 var(--sans); color: var(--muted); }
+body[data-local-edit] #editbar { display: flex; }
+#editbar .grow { flex: 1 1 auto; }
+#editbar .st { min-width: 4rem; text-align: right; font: 600 12px/1.4 var(--sans); color: var(--accent); }
+#editbar button { min-height: 36px; padding: 0 14px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--card); color: var(--accent); font: 600 14px/1 var(--sans); cursor: pointer; }
+#editbar .edn { flex-basis: 100%; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-top: 6px; border-top: 1px solid var(--rule); margin-top: 2px; }
+#editbar .ednl { font: 600 12px/1 var(--sans); color: var(--muted); margin-right: 2px; }
+#editbar .edn button { min-height: 32px; padding: 0 12px; font-size: 13px; border-color: var(--rule); color: var(--muted); }
+#editbar .edn button.on { background: var(--accent); border-color: var(--accent); color: var(--ink); }
+/* an emptied copy slot vanishes for Max (label and all) and comes back in edit mode so it can be refilled */
+.fn:has(> .ed:empty), p.footnote.ed:empty, .exbody.ed:empty, .pull.ed:empty, .know.ed:empty, .softbody.ed:empty, .lby.ed:empty, .lrow .lbl.ed:empty, .arow:has(> .ed:empty:first-child) { display: none; }
+.softcard:has(> .softbody.ed:empty):not(:has(> .rowb-l)) { display: none; }
+body[data-local-edit] .fn:has(> .ed:empty) { display: grid; }
+body[data-local-edit] .arow:has(> .ed:empty:first-child) { display: block; }
+body[data-local-edit] .softcard:has(> .softbody.ed:empty) { display: flex; }
+body[data-local-edit] p.footnote.ed:empty, body[data-local-edit] .exbody.ed:empty, body[data-local-edit] .pull.ed:empty, body[data-local-edit] .know.ed:empty, body[data-local-edit] .softbody.ed:empty { display: block; min-height: 1.2em; }
+body[data-local-edit] .fn > .ed:empty { display: inline-block; min-width: 6em; min-height: 1.2em; }
+body[data-local-edit] .ed { outline: 1px dashed rgba(143,70,38,.35); outline-offset: 2px; border-radius: 2px; cursor: text; }
+body[data-local-edit] .ed:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+body[data-local-edit] .edlink { display: none; }
+.edlink { display: none; color: var(--accent); background: none; border: 0; padding: 12px 0; margin: -12px 0; cursor: pointer; font: 13px/1.4 var(--sans); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---- 6. home ---- */
+.hero { position: relative; width: 100%; text-align: left; cursor: pointer; background: var(--raised-2); border: 0; border-radius: var(--r-hero); padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 6px; }
+.hero .glyph { position: absolute; top: 16px; right: 16px; opacity: .35; color: var(--accent); stroke: currentColor; }
+.hero .hname { font: 400 28px/1.1 var(--display); color: var(--head); padding-right: 56px; text-wrap: balance; }
+.hero .hsub { font: 15px/1.35 var(--sans); color: var(--soft); }
+.hero .cta { margin-top: 12px; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 16px 0 14px; border-radius: 999px; background: var(--accent); color: var(--ink); font: 700 15px/1 var(--sans); }
+.hero .cta svg { flex: none; }
+.two { margin-top: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tile { min-height: 136px; display: flex; flex-direction: column; gap: 4px; text-align: left; cursor: pointer; transition: border-color .15s ease; }
+.tile .tname { font: 400 24px/1.1 var(--display); color: var(--head); }
+.tile .tsub { font: 14px/1.35 var(--sans); color: var(--muted); }
+.tile .tlast { margin-top: auto; padding-top: 10px; font: 600 13px/1.3 var(--sans); color: var(--accent); }
+/* softening date: when a practice last happened, fading with distance, gone after four weeks */
+.hero .when { margin-top: 10px; font: 600 13px/1.3 var(--sans); color: var(--accent); }
+.tile .when { font: 600 13px/1.3 var(--sans); color: var(--accent); }
+.also { gap: 5px; display: flex; flex-direction: column; margin-top: 12px; }
+.also .lbl { margin-bottom: 2px; }
+.arow { font: 14px/1.4 var(--sans); color: var(--text); }
+.arow .an { font-weight: 600; margin-right: .25em; }
+.pills { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.goal { margin-top: 14px; padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 6px; }
+.goal .gline { margin: 0; font: italic 400 18px/1.3 var(--display); color: var(--text); text-wrap: pretty; }
+.goal .klbl { margin: 8px 0 0; font: 600 13px/1.3 var(--sans); color: var(--muted); }
+.goal .know { margin: 0; padding-left: 14px; text-indent: -14px; font: 14px/1.4 var(--sans); color: var(--soft); }
+.goal .know::before { content: '·'; display: inline-block; width: 14px; text-indent: 0; color: var(--muted); }
+/* library rows: one card per recording, tapping opens its screen */
+.lrow { display: flex; flex-direction: column; align-items: flex-start; width: 100%; text-align: left; cursor: pointer; margin-top: 10px; transition: border-color .15s ease; }
+.lrow .lbody { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.lrow .lbl.sm { margin-bottom: 2px; }
+.lrow .lby { font: 13px/1.4 var(--sans); color: var(--muted); }
+.lrow .when { margin-top: 4px; font: 600 13px/1.3 var(--sans); color: var(--accent); }
+.lrow .resume { font: 13px/1.4 var(--sans); color: var(--muted); }
+.lrow .go { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; font: 600 15px/1 var(--sans); color: var(--accent); }
+.lrow:active { border-color: var(--rule-strong); background: var(--bg); }
+.why { margin-top: 18px; }
+.home-foot { margin-top: 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font: 13px/1.4 var(--sans); color: var(--muted); }
+
+/* ---- 7. practice screens: player card · orientation · pull quote · after ---- */
+.paud { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 12px; align-items: start; }
+.paud .play { width: 44px; height: 44px; border: 0; padding: 0; border-radius: 50%; background: var(--accent); display: grid; place-items: center; cursor: pointer; transition: background .15s ease; }
+.paud .play svg { fill: var(--ink); margin-left: 2px; }
+.paud .play .ic-pause { display: none; margin-left: 0; }
+.paud .play.is-playing .ic-play { display: none; }
+.paud .play.is-playing .ic-pause { display: block; }
+.paud audio { display: none; }
+.prog { position: relative; height: 4px; border-radius: 2px; background: var(--rule); margin-top: 10px; cursor: pointer; touch-action: none; }
+.prog::before { content: ''; position: absolute; left: 0; right: 0; top: -14px; bottom: -14px; }
+.prog-fill { height: 100%; width: 0; border-radius: 2px; background: var(--accent); }
+.times { display: flex; justify-content: space-between; margin-top: 5px; font: 600 12px/1.3 var(--sans); color: var(--muted); font-variant-numeric: tabular-nums; }
+.paud .lbody { display: flex; flex-direction: column; gap: 4px; }
+.meta { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.paud .credit { margin-top: 4px; }
+.paud .pstatus { margin: 6px 0 0; font-size: 13px; }
+.paud .presume { margin: 2px 0 0; font: 13px/1.4 var(--sans); color: var(--muted); }
+.exname { font: 600 17px/1.3 var(--serif); color: var(--text); text-wrap: balance; }
+.dur { font: 600 13px/1.4 var(--sans); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.exbody { font: 15px/1.4 var(--sans); color: var(--soft); }
+.fn { display: block; font: 13px/1.4 var(--sans); color: var(--muted); }
+.fk { font-weight: 600; color: var(--text); }
+.fn .fk { margin-right: .35em; }
+.psec { margin: 18px 0 8px; }
+.card > .fn { font: 15px/1.45 var(--sans); color: var(--soft); }
+.card > .fn .fk { color: var(--text); }
+.orient { display: flex; flex-direction: column; gap: 10px; }
+.orient .fn { display: grid; grid-template-columns: 5.2em minmax(0, 1fr); column-gap: 10px; align-items: baseline; }
+.orient .fn .fk { margin: 0; }
+/* the pull quote sits between two hairlines, as it did on Max's first dashboard */
+.pull { margin: 20px 0 0; padding: 18px 10px; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); text-align: center; font: italic 400 20px/1.4 var(--display); color: var(--text); text-wrap: balance; }
+.pbody { margin: 14px 0 0; font: 15px/1.45 var(--sans); color: var(--soft); }
+.last { margin-top: 14px; }
+.softcard { display: flex; flex-direction: column; gap: 6px; }
+.softbody { margin: 0; font: 15px/1.45 var(--sans); color: var(--soft); }
+.after { margin-top: 18px; }
+.after .q { margin: 2px 0 4px; font: italic 400 22px/1.3 var(--display); color: var(--text); text-wrap: pretty; }
+.rowb-l { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 4px; }
+.mark { padding-left: 0; }
+.mark.done { text-decoration: none; color: var(--accent); cursor: default; }
+
+/* ---- 8. your notes ---- */
+.send-row { display: flex; align-items: center; gap: 8px 12px; margin-top: 12px; flex-wrap: wrap; }
+textarea.nbox { width: 100%; min-height: 7.5rem; resize: vertical; font: 17px/1.5 var(--serif); color: var(--text); background: var(--card); border: 1px solid var(--rule-strong); border-radius: var(--r-in); padding: 12px 14px; margin-top: 4px; }
+.qlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.qlist li { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 12px 44px 12px 14px; background: var(--card); border: 1px solid var(--rule); border-radius: var(--r-in); }
+.qhead { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.qlist .d { font: 600 13px/1.4 var(--sans); color: var(--muted); white-space: nowrap; }
+.qctx { font: 600 12px/1.3 var(--sans); color: var(--accent); background: var(--wash); border-radius: 999px; padding: 2px 9px; }
+.qt { font: 15px/1.45 var(--serif); color: var(--text); white-space: pre-wrap; }
+.qx { position: absolute; top: 4px; right: 4px; width: 40px; height: 40px; border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; border-radius: 50%; display: grid; place-items: center; }
+.qmore { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.qmore .qlist { width: 100%; }
+.qtoggle, #copyall { padding-left: 0; min-height: 40px; }
+.nhist { margin-top: 16px; }
+.nh-item { padding: 8px 0; border-top: 1px solid var(--rule); }
+.nh-date { font: 600 13px/1.4 var(--sans); color: var(--muted); }
+.nh-text { margin: 4px 0 0; font: 15px/1.4 var(--sans); color: var(--soft); white-space: pre-wrap; }
+
+/* ---- 9. hover · active · motion ---- */
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover, .lrow:hover { border-color: var(--rule-strong); }
+  .send:hover, .hero:hover .cta, .paud .play:hover { background: var(--accent-hover); }
+  .ghost:hover, #editbar button:hover { border-color: var(--accent); }
+  #fab:hover, .pillbtn:hover { background: var(--wash-2); }
+}
+.tile:active { border-color: var(--rule-strong); background: var(--bg); }
+.hero:active { filter: brightness(.98); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<!--
+  Max's Practice Map — same build as Jan's, Sarah's and Joe's (teleokinetic.github.io/jan-practice etc.):
+  home → screens, #edit copy mode with data-keys, "Copy for Claude", quick-note +, Send to Tanner via FormSubmit.
+  Max-specific: self-hosted recordings (audio/*.mp3; Connecting Pelvis and Head replaced Pelvic Clock 2026-09-13, the Sep 10 session cut
+  Feet, Breath & Lower Belly added the same day; liner notes for both from their Whisper transcripts in audio/*.transcript.md;
+  Ground & Breath and Pelvic Floor are the current max-practice files) with the
+  in-page player from Joe's map; the "Softening Date" completion engine from Max's first dashboard carried over
+  unchanged (same localStorage keys, so his history survives the redesign on the same origin).
+  Copy = the approved 8/12–8/13 text wherever it maps + Tanner's 9/13 editor paste (hero sub, Frequency, library intro, lib.2/lib.3 lines).
+  Resume cues ("Left off at 12:30" / Resume on library cards, "Picks up at" on the player) replace the prose that used to say the player remembers.
+-->
+<artifact-local>
+<div id="editbar">
+  <span>Editing copy — tap any text to change it. Changes save as you type.</span>
+  <span class="grow"></span>
+  <span class="st" id="edst"></span>
+  <button id="copyAll" type="button">Copy for Claude</button>
+  <button id="editDone" type="button">Done</button>
+  <div class="edn" id="edn" aria-label="Go to screen">
+    <span class="ednl">Screen</span>
+    <button type="button" data-go="home">Home</button>
+    <button type="button" data-go="library">Library</button>
+    <button type="button" data-go="pelvis-head">Pelvis &amp; Head</button>
+    <button type="button" data-go="feet-breath-belly">Feet, Breath &amp; Belly</button>
+    <button type="button" data-go="ground">Ground &amp; Breath</button>
+    <button type="button" data-go="floor">Pelvic Floor</button>
+    <button type="button" data-go="note">Your notes</button>
+  </div>
+</div>
+</artifact-local>
+
+<main>
+
+<!-- ================= HOME ================= -->
+<section id="screen-home" class="screen" data-local-active="">
+  <div class="topbar">
+    <span class="wordmark ed" data-key="title">Max's Practice Map</span>
+    <artifact-local><span class="chip" id="pvchip" hidden="">Preview</span></artifact-local>
+  </div>
+
+  <button class="hero" type="button" onclick="go('library')">
+    <svg class="glyph" width="44" height="44" viewBox="0 0 44 44" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M8 34c5-14 23-14 28 0"></path><path d="M15 34c2-7 12-7 14 0"></path><circle cx="22" cy="12" r="3.5" fill="currentColor" stroke="none"></circle></svg>
+    <span class="hname ed" data-key="week.lib.name">Library</span>
+    <span class="hsub ed" data-key="week.lib.body">Four recordings for getting to know the lower belly</span>
+    <span class="cta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FBF9F4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg><span class="ed" data-key="week.lib.cta">Choose a lesson</span></span>
+    <span class="when" data-when="any" hidden=""></span>
+  </button>
+
+  <div class="card soft also">
+    <p class="lbl ed" data-key="week.dose.label">Frequency</p>
+    <div class="arow"><span class="an ed" data-key="week.dose.k">1–3× per week.</span><span class="ed" data-key="week.dose.body">One or two is more than enough to move the needle, and a third is a nice boost if practice feels especially interesting.</span></div>
+  </div>
+
+  <div class="pills">
+    <button class="pillbtn" type="button" onclick="go('note')"><span class="ed" data-key="card.note.title">Your notes</span></button>
+  </div>
+
+  <div class="card goal">
+    <p class="lbl ed" data-key="headed.label">Where you're headed</p>
+    <p class="gline ed" data-key="headed.sentence">Getting to know the lower belly! Power 🤝 presence</p>
+    <p class="klbl ed" data-key="curious.label">Curious about</p>
+    <p class="know ed" data-key="curious.1">The lower belly included in ordinary activity and opening awareness</p>
+    <p class="know ed" data-key="curious.2">A felt sense of space and power</p>
+    <p class="know ed" data-key="curious.3">Exploring the territory of the lower belly with kindness and openness, gentle precision</p>
+  </div>
+
+  <div class="home-foot">
+    <span class="ed" data-key="wordmark">Personal Training for Meditators</span>
+    <artifact-local><button id="editToggle" class="edlink" type="button">Edit copy</button></artifact-local>
+  </div>
+</section>
+
+<!-- ================= LIBRARY ================= -->
+<section id="screen-library" class="screen">
+  <div class="topbar"><button class="back" type="button" onclick="go('home')">‹ Home</button></div>
+  <div class="stitle ed" role="heading" aria-level="2" data-key="lib.title">Library</div>
+  <p class="sintro ed" data-key="lib.intro">Four recordings that visit the same territory from different directions</p>
+
+  <button class="card lrow" type="button" onclick="go('pelvis-head')" style="margin-top:0">
+    <span class="lbody">
+      <span class="lbl sm ed" data-key="lib.1.tag">Start here</span>
+      <span class="meta"><span class="exname ed" data-key="lib.1.name">Connecting Pelvis and Head</span><span class="dur ed" data-key="lib.1.dur">23 min</span></span>
+      <span class="exbody ed" data-key="lib.1.what">The pelvic clock and a gentle nod of the head, listening for how each reaches the other through the spine.</span>
+      <span class="lby ed" data-key="lib.1.by">Tanner Holman</span>
+      <span class="when" data-when="pelvis-head" hidden=""></span>
+      <span class="resume" data-resume="pelvis-head" hidden=""></span>
+    </span>
+    <span class="go"><span class="gotext">Listen</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></span>
+  </button>
+  <!-- lib.4 keys: added 2026-09-13 and placed second; key numbers stay stable so copy already saved on Max's device keeps mapping -->
+  <button class="card lrow" type="button" onclick="go('feet-breath-belly')">
+    <span class="lbody">
+      <span class="lbl sm ed" data-key="lib.4.tag">From our session · Sep 10</span>
+      <span class="meta"><span class="exname ed" data-key="lib.4.name">Feet, Breath &amp; Lower Belly</span><span class="dur ed" data-key="lib.4.dur">30 min</span></span>
+      <span class="exbody ed" data-key="lib.4.what">The soles of the feet, breath into the lower belly, and small movements of the ankle with the belly setting the pace.</span>
+      <span class="lby ed" data-key="lib.4.by">Tanner Holman</span>
+      <span class="when" data-when="feet-breath-belly" hidden=""></span>
+      <span class="resume" data-resume="feet-breath-belly" hidden=""></span>
+    </span>
+    <span class="go"><span class="gotext">Listen</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></span>
+  </button>
+  <button class="card lrow" type="button" onclick="go('ground')">
+    <span class="lbody">
+      <span class="lbl sm ed" data-key="lib.2.tag">From our session · Aug 11</span>
+      <span class="meta"><span class="exname ed" data-key="lib.2.name">Ground &amp; Breath — Our Session Practice</span><span class="dur ed" data-key="lib.2.dur">33 min</span></span>
+      <span class="exbody ed" data-key="lib.2.what">The practice from August 11</span>
+      <span class="lby ed" data-key="lib.2.by">Tanner Holman</span>
+      <span class="when" data-when="session" hidden=""></span>
+      <span class="resume" data-resume="session" hidden=""></span>
+    </span>
+    <span class="go"><span class="gotext">Listen</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></span>
+  </button>
+  <button class="card lrow" type="button" onclick="go('floor')">
+    <span class="lbody">
+      <span class="lbl sm ed" data-key="lib.3.tag">The longer lesson</span>
+      <span class="meta"><span class="exname ed" data-key="lib.3.name">Reducing Tension in Your Pelvic Floor</span><span class="dur ed" data-key="lib.3.dur">45 min</span></span>
+      <span class="exbody ed" data-key="lib.3.what">Breath, abdomen, hips, spine, and the pelvic floor.</span>
+      <span class="lby ed" data-key="lib.3.by">Deborah Bowes</span>
+      <span class="when" data-when="pelvic-floor" hidden=""></span>
+      <span class="resume" data-resume="pelvic-floor" hidden=""></span>
+    </span>
+    <span class="go"><span class="gotext">Listen</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></span>
+  </button>
+
+  <div class="card soft softcard why">
+    <p class="lbl ed" data-key="why.label">Why we vary it</p>
+    <p class="softbody ed" data-key="why.body">This is the broader motor learning context from Claude: "These recordings deliberately revisit the same territory — breath, pelvis, lower belly — in different positions, speeds, and durations. Coming back to the same place along different paths builds retention, and it carries into ordinary activity better than repeating one fixed sequence."</p>
+  </div>
+</section>
+
+<!-- ================= CONNECTING PELVIS AND HEAD ================= -->
+<section id="screen-pelvis-head" class="screen" data-pid="pelvis-head">
+  <div class="topbar"><button class="back" type="button" onclick="go('library')">‹ Library</button></div>
+  <div class="stitle ed" role="heading" aria-level="2" data-key="ph.title">Connecting Pelvis and Head</div>
+  <p class="sintro ed" data-key="ph.intro">Start here. A short floor lesson on the spine as the channel between pelvis and head: the pelvic clock, a gentle nod, then the two together.</p>
+
+  <div class="card paud" data-pid="pelvis-head" data-dur="22:45" data-name="ph.name" data-credit="ph.credit">
+    <button class="play" type="button" aria-label="Play"><svg class="ic-play" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"></path></svg><svg class="ic-pause" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5h4.5v15H6zM13.5 4.5H18v15h-4.5z"></path></svg></button>
+    <div class="lbody">
+      <div class="meta"><div class="exname ed" data-key="ph.name">Connecting Pelvis and Head</div><span class="dur ed" data-key="ph.dur">23 min</span></div>
+      <audio preload="metadata" src="audio/pelvis-head.mp3"></audio>
+      <div class="prog" role="slider" aria-label="Position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="prog-fill"></div></div>
+      <div class="times"><span class="tcur">0:00</span><span class="trem"></span></div>
+      <p class="presume" hidden=""></p>
+      <span class="fn credit ed" data-key="ph.credit">Tanner Holman</span>
+      <p class="nstatus pstatus" hidden=""></p>
     </div>
+  </div>
 
-    <!-- ============ HOME ============ -->
-    <section class="view" id="view-home">
-      <div class="home-grid">
-        <div class="g-head">
-          <div class="m-eyebrow formax">For Max</div>
-          <h1 class="m-h1">Max Soweski</h1>
-          <p class="m-one">Getting to know the lower belly! Power 🤝 presence</p>
-          <div class="rhythm">
-            <div class="dots"><i class="dot fill"></i><i class="dot"></i><i class="dot big"></i></div>
-            <div class="rhythm-text">
-              <p>Recommended dose: 1-3x per week. One or two is more than enough to move the needle, and a third is a nice boost if practice feels especially interesting.</p>
-              <p class="rest">Choose a lesson below.</p>
-            </div>
-          </div>
-        </div>
+  <p class="lbl psec ed" data-key="ph.orient.label">Orientation</p>
+  <div class="card orient">
+    <span class="fn"><span class="fk ed" data-key="ph.o1.k">Position</span><span class="ed" data-key="ph.o1">supine · knees bent, feet standing → standing to finish</span></span>
+    <span class="fn"><span class="fk ed" data-key="ph.o2.k">Focus</span><span class="ed" data-key="ph.o2">the spine as the channel between pelvis and head · pelvic clock 12–6, then 3–9 · the head nods, then pelvis and head move together, then in opposition</span></span>
+    <span class="fn"><span class="fk ed" data-key="ph.o3.k">Territory</span><span class="ed" data-key="ph.o3">sacrum &amp; tailbone · low back · ribs &amp; sternum · throat &amp; chin · back of the head</span></span>
+  </div>
 
-        <div class="g-lib">
-          <div class="m-eyebrow quiet lib-head">Practice library</div>
-          <a class="lib-row" href="#/pelvic-clock">
-            <div class="pcirc"><i class="tri"></i></div>
-            <div class="lr-main">
-              <div class="lr-title">Pelvic Clock — Connected Spine</div>
-              <div class="lr-sub">Tanner Holman</div>
-              <div class="lr-when"></div>
-            </div>
-            <span class="lr-dur">31:12</span>
-            <span class="lr-chev">›</span>
-          </a>
-          <a class="lib-row" href="#/pelvic-floor">
-            <div class="pcirc"><i class="tri"></i></div>
-            <div class="lr-main">
-              <div class="lr-title">Reducing Tension in Your Pelvic Floor</div>
-              <div class="lr-sub">Deborah Bowes</div>
-              <div class="lr-when"></div>
-            </div>
-            <span class="lr-dur">45:19</span>
-            <span class="lr-chev">›</span>
-          </a>
-          <a class="lib-row" href="#/session">
-            <div class="pcirc"><i class="tri"></i></div>
-            <div class="lr-main">
-              <div class="lr-title">Ground &amp; Breath — Our Session Practice</div>
-              <div class="lr-sub">Tanner Holman · from our Aug 11 session</div>
-              <div class="lr-when"></div>
-            </div>
-            <span class="lr-dur">32:56</span>
-            <span class="lr-chev">›</span>
-          </a>
-          <p class="lib-hint">Notes you send land in Tanner's inbox.</p>
-        </div>
+  <p class="pull ed" data-key="ph.quote">"Allow the pelvis to ask a question, and listen for the answer through the whole spine."</p>
+  <p class="pbody footnote ed" data-key="ph.body" style="margin-top:14px">Move gently and stay within a comfortable range. Pause or change position whenever you need.</p>
+  <artifact-local><p class="footnote last" data-last="pelvis-head" hidden=""></p></artifact-local>
 
-        <div class="g-watch">
-          <div class="watch">
-            <div class="m-eyebrow quiet">Curious about</div>
-            <ul>
-              <li>The lower belly included in ordinary activity and opening awareness</li>
-              <li>A felt sense of space and power</li>
-              <li>Exploring the territory of the lower belly with kindness and openness, gentle precision</li>
-            </ul>
-          </div>
-        </div>
+  <div class="card soft softcard after">
+    <p class="lbl ed" data-key="ph.after.label">After practice</p>
+    <p class="q ed" data-key="ph.after.q">What did you notice?</p>
+    <p class="softbody ed" data-key="ph.after.body">A line is plenty. It lands in your notes, tagged with this practice.</p>
+    <artifact-local><div class="rowb-l"><button class="pillbtn" type="button" onclick="openSheet(true)">Add a note</button><button class="reset mark" type="button" data-pid="pelvis-head">Practiced without the recording? Mark it</button></div></artifact-local>
+  </div>
+</section>
 
-        <div class="g-meta">
-          <div class="watch">
-            <div class="m-eyebrow quiet">Why we vary it</div>
-            <p class="meta-body">This is the broader motor learning context from Claude: "These recordings deliberately revisit the same territory — breath, pelvis, lower belly — in different positions, speeds, and durations. Coming back to the same place along different paths builds retention, and it carries into ordinary activity better than repeating one fixed sequence."</p>
-          </div>
-        </div>
-      </div>
-    </section>
+<!-- ================= FEET, BREATH & LOWER BELLY (session 2026-09-10) ================= -->
+<section id="screen-feet-breath-belly" class="screen" data-pid="feet-breath-belly">
+  <div class="topbar"><button class="back" type="button" onclick="go('library')">‹ Library</button></div>
+  <div class="stitle ed" role="heading" aria-level="2" data-key="fb.title">Feet, Breath &amp; Lower Belly</div>
+  <p class="sintro ed" data-key="fb.intro">From our session on September 10.</p>
 
-    <!-- ============ PELVIC CLOCK ============ -->
-    <section class="view" id="view-pelvic-clock">
-      <div class="lesson">
-        <div class="backrow">
-          <a class="backlink" href="#/">‹ Library</a>
-        </div>
-        <span class="l-eyebrow">Start here</span>
-        <h2 class="m-h2">Pelvic Clock — Connected Spine</h2>
-        <div class="teacher-line">Tanner Holman · 31 min</div>
-        <div class="m-player" data-audio="audio/pelvic-clock.mp3" data-title="Pelvic Clock — Connected Spine" data-dur="31:12"></div>
-        <p class="last-line"></p>
-        <div class="orient">
-          <p class="o-row"><span class="o-label">Position</span><span class="o-terms">supine · knees bent, feet standing</span></p>
-          <p class="o-row"><span class="o-label">Focus</span><span class="o-terms">the pelvic clock — 12–6, then 3–9 · movement traveling pelvis ↔ head</span></p>
-          <p class="o-row"><span class="o-label">Territory</span><span class="o-terms">sacrum &amp; tailbone · lumbar spine · ribs · sternum · neck &amp; head</span></p>
-        </div>
-        <p class="pull">"Let the pelvis ask a question, and listen for the answer through the spine."</p>
-        <div class="note-card" data-practice="Pelvic Clock — Connected Spine">
-          <div class="m-eyebrow quiet">After practice</div>
-          <p class="prompt">What did you notice?</p>
-          <textarea class="n-box" placeholder="Right side led again; left ribs joined near the end…"></textarea>
-          <div class="send-row">
-            <button class="send">Send to Tanner</button>
-            <span class="helper">Lands in Tanner's inbox — a copy stays here.</span>
-          </div>
-          <div class="note-status" aria-live="polite"></div>
-          <div class="note-history"></div>
-        </div>
-        <button class="mark-line" type="button">Practiced without the recording? Mark it</button>
-      </div>
-    </section>
+  <div class="card paud" data-pid="feet-breath-belly" data-dur="30:26" data-name="fb.name" data-credit="fb.credit">
+    <button class="play" type="button" aria-label="Play"><svg class="ic-play" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"></path></svg><svg class="ic-pause" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5h4.5v15H6zM13.5 4.5H18v15h-4.5z"></path></svg></button>
+    <div class="lbody">
+      <div class="meta"><div class="exname ed" data-key="fb.name">Feet, Breath &amp; Lower Belly</div><span class="dur ed" data-key="fb.dur">30 min</span></div>
+      <audio preload="metadata" src="audio/feet-breath-belly.mp3"></audio>
+      <div class="prog" role="slider" aria-label="Position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="prog-fill"></div></div>
+      <div class="times"><span class="tcur">0:00</span><span class="trem"></span></div>
+      <p class="presume" hidden=""></p>
+      <span class="fn credit ed" data-key="fb.credit">Tanner Holman · from our Sep 10 session</span>
+      <p class="nstatus pstatus" hidden=""></p>
+    </div>
+  </div>
 
-    <!-- ============ PELVIC FLOOR ============ -->
-    <section class="view" id="view-pelvic-floor">
-      <div class="lesson">
-        <div class="backrow">
-          <a class="backlink" href="#/">‹ Library</a>
-        </div>
-        <span class="l-eyebrow">The longer lesson</span>
-        <h2 class="m-h2">Reducing Tension in Your Pelvic Floor</h2>
-        <div class="teacher-line">Deborah Bowes · 45 min</div>
-        <div class="m-player" data-audio="audio/pelvic-floor.mp3" data-title="Reducing Tension in Your Pelvic Floor" data-dur="45:19"></div>
-        <p class="last-line"></p>
-        <div class="orient">
-          <p class="o-row"><span class="o-label">Position</span><span class="o-terms">supine · legs long or knees bent</span></p>
-          <p class="o-row"><span class="o-label">Focus</span><span class="o-terms">releasing the pelvic floor · breath through the whole container</span></p>
-          <p class="o-row"><span class="o-label">Territory</span><span class="o-terms">pelvic floor · deep abdominals · tailbone &amp; sacrum · lower back · ribs</span></p>
-        </div>
-        <p class="pull">"The pelvic floor doesn't really work alone."</p>
-        <p class="m-body">Take it at whatever pace the day allows; there's no need to finish in one sitting.</p>
-        <div class="note-card" data-practice="Reducing Tension in Your Pelvic Floor">
-          <div class="m-eyebrow quiet">After practice</div>
-          <p class="prompt">What did you notice?</p>
-          <textarea class="n-box" placeholder="Right side led again; left ribs joined near the end…"></textarea>
-          <div class="send-row">
-            <button class="send">Send to Tanner</button>
-            <span class="helper">Lands in Tanner's inbox — a copy stays here.</span>
-          </div>
-          <div class="note-status" aria-live="polite"></div>
-          <div class="note-history"></div>
-        </div>
-        <button class="mark-line" type="button">Practiced without the recording? Mark it</button>
-      </div>
-    </section>
+  <p class="lbl psec ed" data-key="fb.orient.label">Orientation</p>
+  <div class="card orient">
+    <span class="fn"><span class="fk ed" data-key="fb.o1.k">Position</span><span class="ed" data-key="fb.o1">standing → supine → prone → supine → standing to check in</span></span>
+    <span class="fn"><span class="fk ed" data-key="fb.o2.k">Focus</span><span class="ed" data-key="fb.o2">the low belly as a barometer · breath into the ribs, the sides, and the low belly · the changing angle of the ankle, then circles and painting with the toes</span></span>
+    <span class="fn"><span class="fk ed" data-key="fb.o3.k">Territory</span><span class="ed" data-key="fb.o3">soles of the feet · ankles &amp; Achilles · knees &amp; hips · ribs &amp; diaphragm · low belly above the pubic bone · back ribs</span></span>
+  </div>
 
-    <!-- ============ SESSION PRACTICE ============ -->
-    <section class="view" id="view-session">
-      <div class="lesson">
-        <div class="backrow">
-          <a class="backlink" href="#/">‹ Library</a>
-        </div>
-        <span class="l-eyebrow">From our session</span>
-        <h2 class="m-h2">Ground &amp; Breath — Our Session Practice</h2>
-        <div class="teacher-line">Tanner Holman · from our Aug 11 session</div>
-        <div class="m-player" data-audio="audio/session-practice.mp3" data-title="Ground &amp; Breath — Our Session Practice" data-dur="32:56"></div>
-        <p class="last-line"></p>
-        <div class="orient">
-          <p class="o-row"><span class="o-label">Position</span><span class="o-terms">standing → supine</span></p>
-          <p class="o-row"><span class="o-label">Focus</span><span class="o-terms">natural breath · support from the ground · right–left difference</span></p>
-          <p class="o-row"><span class="o-label">Territory</span><span class="o-terms">back ribs · diaphragm · collarbones · sternum · lower belly</span></p>
-        </div>
-        <p class="pull">"Allow yourself to relax into the generosity of the ground."</p>
-        <p class="m-body">The practice from our session, as we did it. Your responses are trimmed out, but the time they took is left in as open space — the same pauses, now yours to reflect in.</p>
-        <div class="note-card" data-practice="Ground &amp; Breath — Our Session Practice">
-          <div class="m-eyebrow quiet">After practice</div>
-          <p class="prompt">What did you notice?</p>
-          <textarea class="n-box" placeholder="Right side led again; left ribs joined near the end…"></textarea>
-          <div class="send-row">
-            <button class="send">Send to Tanner</button>
-            <span class="helper">Lands in Tanner's inbox — a copy stays here.</span>
-          </div>
-          <div class="note-status" aria-live="polite"></div>
-          <div class="note-history"></div>
-        </div>
-        <button class="mark-line" type="button">Practiced without the recording? Mark it</button>
-      </div>
-    </section>
-  </main>
+  <p class="pull ed" data-key="fb.quote">"There really is a sense in which you can get to know your feet almost like they're hands."</p>
+  <p class="pbody footnote ed" data-key="fb.body" style="margin-top:14px">Our session, as we did it. The pauses are left in, including the stretch where you cued yourself through the other side and the minutes spent imagining the sequence before standing.</p>
+  <artifact-local><p class="footnote last" data-last="feet-breath-belly" hidden=""></p></artifact-local>
 
-  <script>
-    /* ---------- practice sessions (Softening Date) ----------
-       At most one session per practice per local day (3am boundary); everything
-       self-deletes after 30 days — the store cannot hold a lifetime total. */
-    var SESS_KEY = "maxsessions-v1";
-    function dayStart(t){ var d = new Date(t - 10800000); d.setHours(0,0,0,0); return d.getTime(); }
-    function loadSessions(){
-      try {
-        var s = JSON.parse(localStorage.getItem(SESS_KEY) || "[]");
-        var cutoff = Date.now() - 30 * 86400000;
-        var pruned = s.filter(function(x){ return x.t >= cutoff; });
-        if (pruned.length !== s.length) saveSessions(pruned);
-        return pruned;
-      } catch(e){ return []; }
+  <div class="card soft softcard after">
+    <p class="lbl ed" data-key="fb.after.label">After practice</p>
+    <p class="q ed" data-key="fb.after.q">What did you notice?</p>
+    <p class="softbody ed" data-key="fb.after.body">A line is plenty. It lands in your notes, tagged with this practice.</p>
+    <artifact-local><div class="rowb-l"><button class="pillbtn" type="button" onclick="openSheet(true)">Add a note</button><button class="reset mark" type="button" data-pid="feet-breath-belly">Practiced without the recording? Mark it</button></div></artifact-local>
+  </div>
+</section>
+
+<!-- ================= GROUND & BREATH ================= -->
+<section id="screen-ground" class="screen" data-pid="session">
+  <div class="topbar"><button class="back" type="button" onclick="go('library')">‹ Library</button></div>
+  <div class="stitle ed" role="heading" aria-level="2" data-key="gb.title">Ground &amp; Breath — Our Session Practice</div>
+  <p class="sintro ed" data-key="gb.intro">From our session on August 11.</p>
+
+  <div class="card paud" data-pid="session" data-dur="32:56" data-name="gb.name" data-credit="gb.credit">
+    <button class="play" type="button" aria-label="Play"><svg class="ic-play" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"></path></svg><svg class="ic-pause" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5h4.5v15H6zM13.5 4.5H18v15h-4.5z"></path></svg></button>
+    <div class="lbody">
+      <div class="meta"><div class="exname ed" data-key="gb.name">Ground &amp; Breath</div><span class="dur ed" data-key="gb.dur">33 min</span></div>
+      <audio preload="metadata" src="audio/session-practice.mp3"></audio>
+      <div class="prog" role="slider" aria-label="Position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="prog-fill"></div></div>
+      <div class="times"><span class="tcur">0:00</span><span class="trem"></span></div>
+      <p class="presume" hidden=""></p>
+      <span class="fn credit ed" data-key="gb.credit">Tanner Holman · from our Aug 11 session</span>
+      <p class="nstatus pstatus" hidden=""></p>
+    </div>
+  </div>
+
+  <p class="lbl psec ed" data-key="gb.orient.label">Orientation</p>
+  <div class="card orient">
+    <span class="fn"><span class="fk ed" data-key="gb.o1.k">Position</span><span class="ed" data-key="gb.o1">standing → supine</span></span>
+    <span class="fn"><span class="fk ed" data-key="gb.o2.k">Focus</span><span class="ed" data-key="gb.o2">natural breath · support from the ground · right–left difference</span></span>
+    <span class="fn"><span class="fk ed" data-key="gb.o3.k">Territory</span><span class="ed" data-key="gb.o3">back ribs · diaphragm · collarbones · sternum · lower belly</span></span>
+  </div>
+
+  <p class="pull ed" data-key="gb.quote">"Allow yourself to relax into the generosity of the ground."</p>
+  <p class="pbody footnote ed" data-key="gb.body" style="margin-top:14px">The practice from our session, as we did it. Your responses are trimmed out, but the time they took is left in as open space — the same pauses, now yours to reflect in.</p>
+  <artifact-local><p class="footnote last" data-last="session" hidden=""></p></artifact-local>
+
+  <div class="card soft softcard after">
+    <p class="lbl ed" data-key="gb.after.label">After practice</p>
+    <p class="q ed" data-key="gb.after.q">What did you notice?</p>
+    <p class="softbody ed" data-key="gb.after.body">A line is plenty. It lands in your notes, tagged with this practice.</p>
+    <artifact-local><div class="rowb-l"><button class="pillbtn" type="button" onclick="openSheet(true)">Add a note</button><button class="reset mark" type="button" data-pid="session">Practiced without the recording? Mark it</button></div></artifact-local>
+  </div>
+</section>
+
+<!-- ================= PELVIC FLOOR ================= -->
+<section id="screen-floor" class="screen" data-pid="pelvic-floor">
+  <div class="topbar"><button class="back" type="button" onclick="go('library')">‹ Library</button></div>
+  <div class="stitle ed" role="heading" aria-level="2" data-key="pf.title">Reducing Tension in Your Pelvic Floor</div>
+  <p class="sintro ed" data-key="pf.intro">The longer lesson. It widens the territory: breath, abdomen, hips, spine, and the pelvic floor.</p>
+
+  <div class="card paud" data-pid="pelvic-floor" data-dur="45:19" data-name="pf.name" data-credit="pf.credit">
+    <button class="play" type="button" aria-label="Play"><svg class="ic-play" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"></path></svg><svg class="ic-pause" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5h4.5v15H6zM13.5 4.5H18v15h-4.5z"></path></svg></button>
+    <div class="lbody">
+      <div class="meta"><div class="exname ed" data-key="pf.name">Reducing Tension in Your Pelvic Floor</div><span class="dur ed" data-key="pf.dur">45 min</span></div>
+      <audio preload="metadata" src="audio/pelvic-floor.mp3"></audio>
+      <div class="prog" role="slider" aria-label="Position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="prog-fill"></div></div>
+      <div class="times"><span class="tcur">0:00</span><span class="trem"></span></div>
+      <p class="presume" hidden=""></p>
+      <span class="fn credit ed" data-key="pf.credit">Deborah Bowes</span>
+      <p class="nstatus pstatus" hidden=""></p>
+    </div>
+  </div>
+
+  <p class="lbl psec ed" data-key="pf.orient.label">Orientation</p>
+  <div class="card orient">
+    <span class="fn"><span class="fk ed" data-key="pf.o1.k">Position</span><span class="ed" data-key="pf.o1">supine · legs long or knees bent</span></span>
+    <span class="fn"><span class="fk ed" data-key="pf.o2.k">Focus</span><span class="ed" data-key="pf.o2">releasing the pelvic floor · breath through the whole container</span></span>
+    <span class="fn"><span class="fk ed" data-key="pf.o3.k">Territory</span><span class="ed" data-key="pf.o3">pelvic floor · deep abdominals · tailbone &amp; sacrum · lower back · ribs</span></span>
+  </div>
+
+  <p class="pull ed" data-key="pf.quote">"The pelvic floor doesn't really work alone."</p>
+  <p class="pbody footnote ed" data-key="pf.body" style="margin-top:14px">Take it at whatever pace the day allows; there's no need to finish in one sitting. The player remembers where you left off.</p>
+  <artifact-local><p class="footnote last" data-last="pelvic-floor" hidden=""></p></artifact-local>
+
+  <div class="card soft softcard after">
+    <p class="lbl ed" data-key="pf.after.label">After practice</p>
+    <p class="q ed" data-key="pf.after.q">What did you notice?</p>
+    <p class="softbody ed" data-key="pf.after.body">A line is plenty. It lands in your notes, tagged with this practice.</p>
+    <artifact-local><div class="rowb-l"><button class="pillbtn" type="button" onclick="openSheet(true)">Add a note</button><button class="reset mark" type="button" data-pid="pelvic-floor">Practiced without the recording? Mark it</button></div></artifact-local>
+  </div>
+</section>
+
+<!-- ================= YOUR NOTES ================= -->
+<section id="screen-note" class="screen">
+  <div class="topbar"><button class="back" type="button" onclick="go('home')">‹ Home</button><artifact-local><button class="reset" type="button" onclick="clearNote()">Clear draft</button></artifact-local></div>
+  <div class="stitle ed" role="heading" aria-level="2" data-key="note.title">Your notes</div>
+  <p class="sintro ed" data-key="note.intro">Anything you notice between sessions — send it over whenever.</p>
+  <p class="lbl ed" data-key="note.compose.label">What are you noticing?</p>
+  <artifact-local>
+    <textarea class="nbox" id="note-main" placeholder="This week…"></textarea>
+    <div class="send-row">
+      <button class="send" id="send" type="button">Send to Tanner</button>
+      <button class="ghost" id="copy" type="button">Copy</button>
+      <span class="nstatus" id="nstatus"></span>
+    </div>
+    <div class="nhist" id="nhist"></div>
+  </artifact-local>
+  <p class="lbl psec ed" data-key="note.list.label">Notes you've added</p>
+  <artifact-local>
+    <p class="footnote" id="qempty" style="margin-top:0">Nothing yet — tap + on any screen, or "Add a note" after a practice.</p>
+    <p class="footnote" id="qnone" style="margin-top:0" hidden="">Nothing new since you last shared.</p>
+    <ul class="qlist" id="qlist"></ul>
+    <div class="qmore" id="qmore"></div>
+    <button class="reset" id="copyall" type="button" hidden="">Copy all notes</button>
+  </artifact-local>
+  <p class="footnote ed" data-key="note.foot">Notes you send land in Tanner's inbox. If sending fails, your mail app opens with the note filled in.</p>
+</section>
+
+</main>
+
+<button id="fab" type="button" artifact-local="" aria-controls="sheet" aria-expanded="false" aria-label="Quick note"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<div id="sheet" artifact-local="" hidden="">
+  <p class="lbl" id="sheet-lbl">Quick note</p>
+  <textarea id="sheet-text" placeholder="What did you notice?"></textarea>
+  <div class="rowb">
+    <button class="ghost" id="sheet-cancel" type="button">Cancel</button>
+    <button class="send" id="sheet-save" type="button">Save</button>
+  </div>
+</div>
+
+<script>
+/* ---------- preview vs. live ----------
+   This same file is the build source for teleokinetic.github.io/max-practice. Anywhere else (the artifact
+   preview) the recordings aren't reachable and notes shouldn't really send, so those paths say so instead. */
+var PREVIEW = location.protocol !== 'file:' && !/(^|\.)teleokinetic\.github\.io$/.test(location.hostname) && location.hostname !== 'localhost';
+(function () { var c = document.getElementById('pvchip'); if (c && PREVIEW) c.hidden = false; })();
+
+/* ---------- navigation (per-viewer) ---------- */
+var SCREENS = ['home', 'library', 'pelvis-head', 'feet-breath-belly', 'ground', 'floor', 'note'];
+function curScreen() { return SCREENS.filter(function (s) { return document.getElementById('screen-' + s).hasAttribute('data-local-active'); })[0] || 'home'; }
+function go(name, force) {
+  if (document.body.hasAttribute('data-local-edit') && !force) return; /* editing copy: cards don't navigate — use the edit bar's screen row */
+  SCREENS.forEach(function (s) {
+    var el = document.getElementById('screen-' + s);
+    if (s === name) el.setAttribute('data-local-active', ''); else el.removeAttribute('data-local-active');
+  });
+  document.querySelectorAll('#edn button[data-go]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-go') === name); });
+  document.querySelectorAll('audio').forEach(function (a) { if (!a.closest('.screen').hasAttribute('data-local-active')) a.pause(); });
+  renderRecency();
+  window.scrollTo(0, 0);
+}
+document.getElementById('edn').addEventListener('click', function (ev) { var b = ev.target.closest('button[data-go]'); if (b) go(b.getAttribute('data-go'), true); });
+
+/* ---------- copy editing (Tanner: open with #edit) ----------
+   Edited copy is keyed by data-key. Kept in: copy.json alongside this page (committed to the
+   repo — survives for every viewer) → this browser's localStorage → the page's defaults.
+   "Copy for Claude" puts every key on the clipboard so the next build can bake it in. */
+var EDS = Array.prototype.slice.call(document.querySelectorAll('.ed'));
+var CKEY = 'max-map-copy-v1';
+var edst = document.getElementById('edst'), edT;
+function note(msg, hold) { edst.textContent = msg; clearTimeout(edT); if (!hold) edT = setTimeout(function () { edst.textContent = ''; }, 1800); }
+function collect() { var o = {}; EDS.forEach(function (el) { var k = el.getAttribute('data-key'); if (k) o[k] = el.textContent; }); return o; }
+function apply(o) { if (!o) return; EDS.forEach(function (el) { var k = el.getAttribute('data-key'); if (k && typeof o[k] === 'string') el.textContent = o[k]; }); }
+function setEdit(on) {
+  EDS.forEach(function (el) { if (on) el.setAttribute('contenteditable', 'true'); else el.removeAttribute('contenteditable'); });
+  if (on) { document.body.setAttribute('data-local-edit', ''); window.scrollTo(0, 0); var cur = curScreen(); document.querySelectorAll('#edn button[data-go]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-go') === cur); }); } else document.body.removeAttribute('data-local-edit');
+  if (!on && location.hash === '#edit') { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+}
+/* keep edited text plain: no rich paste, no line breaks inside a text leaf */
+EDS.forEach(function (el) {
+  el.addEventListener('paste', function (e) {
+    e.preventDefault();
+    var t = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/\s+/g, ' ');
+    try { document.execCommand('insertText', false, t); } catch (err) { el.textContent += t; }
+  });
+  el.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
+});
+document.getElementById('editToggle').onclick = function () { setEdit(true); };
+/* load: copy.json (repo) → localStorage → defaults */
+(function loadCopy() {
+  var local = null; try { local = JSON.parse(localStorage.getItem(CKEY) || 'null'); } catch (e) {}
+  if (local) apply(local);
+  try {
+    fetch('copy.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (remote) {
+      if (remote && typeof remote === 'object') { apply(remote); try { localStorage.setItem(CKEY, JSON.stringify(remote)); } catch (e) {} }
+    }).catch(function () {});
+  } catch (e) {}
+})();
+if (location.hash === '#edit') setEdit(true);
+window.addEventListener('hashchange', function () { setEdit(location.hash === '#edit'); });
+document.getElementById('editDone').onclick = function () { setEdit(false); };
+EDS.forEach(function (el) {
+  el.addEventListener('input', function () {
+    try { localStorage.setItem(CKEY, JSON.stringify(collect())); } catch (e) {}
+    note('saved on this device', true);
+  });
+});
+document.getElementById('copyAll').onclick = function () {
+  var lines = EDS.map(function (el) { return (el.getAttribute('data-key') || '?') + ' — ' + el.textContent.replace(/\s+/g, ' ').trim(); });
+  var text = 'Max\'s Practice Map — copy\n\n' + lines.join('\n');
+  function done() { note('copied'); }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, done); else done();
+};
+
+/* ---------- practice sessions: "Softening Date" (per-viewer) ----------
+   Carried over from Max's first dashboard, keys and all, so history survives the redesign.
+   A session = listening to at least half the track or 8 minutes (scrub-proof), a manual mark, or a note
+   from that practice's screen. At most one per practice per local day (3am boundary). Everything
+   self-prunes after 30 days — no lifetime totals, no zeros. Recency words fade with distance and vanish
+   at four weeks; "Nth time this month" appears only from the second time. */
+var SESS_KEY = 'maxsessions-v1';
+function dayStart(t) { var d = new Date(t - 10800000); d.setHours(0, 0, 0, 0); return d.getTime(); }
+function loadSessions() {
+  try {
+    var s = JSON.parse(localStorage.getItem(SESS_KEY) || '[]');
+    var cutoff = Date.now() - 30 * 86400000;
+    var pruned = s.filter(function (x) { return x.t >= cutoff; });
+    if (pruned.length !== s.length) saveSessions(pruned);
+    return pruned;
+  } catch (e) { return []; }
+}
+function saveSessions(s) { try { localStorage.setItem(SESS_KEY, JSON.stringify(s)); } catch (e) {} }
+function todaySession(pid) { var today = dayStart(Date.now()); return loadSessions().some(function (x) { return x.p === pid && dayStart(x.t) === today; }); }
+function recordSession(pid, source) {
+  if (todaySession(pid)) return false;
+  var s = loadSessions(); s.push({ p: pid, t: Date.now(), src: source || 'listen' });
+  saveSessions(s); renderRecency(); return true;
+}
+function undoTodaySession(pid) {
+  var today = dayStart(Date.now());
+  saveSessions(loadSessions().filter(function (x) { return !(x.p === pid && dayStart(x.t) === today); }));
+  renderRecency();
+}
+function ordinal(n) { var v = n % 100; if (v >= 11 && v <= 13) return n + 'th'; return n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th'); }
+function recencyInfo(pid) {
+  var mine = loadSessions().filter(function (x) { return x.p === pid; });
+  if (!mine.length) return null;
+  var last = Math.max.apply(null, mine.map(function (x) { return x.t; }));
+  var days = Math.round((dayStart(Date.now()) - dayStart(last)) / 86400000);
+  if (days >= 28) return null;
+  var word, op;
+  if (days === 0) { word = 'today'; op = 1; }
+  else if (days === 1) { word = 'yesterday'; op = 1; }
+  else if (days <= 6) { word = new Date(last).toLocaleDateString(undefined, { weekday: 'long' }); op = .8; }
+  else if (days <= 13) { word = 'last week'; op = .65; }
+  else { word = 'a couple weeks ago'; op = .5; }
+  var count = 0;
+  if (days < 14) { var now = new Date(); count = mine.filter(function (x) { var d = new Date(x.t); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }).length; }
+  return { word: word, op: op, days: days, count: count };
+}
+var PIDS = { 'pelvis-head': 'lib.1.name', 'feet-breath-belly': 'lib.4.name', 'session': 'lib.2.name', 'pelvic-floor': 'lib.3.name' };
+function shortName(pid) { return txt(PIDS[pid], pid).split(' — ')[0]; }
+/* a saved listening position worth resuming (same rule the player uses: past 30s, more than a minute left) */
+function savedPos(pid) {
+  var root = document.querySelector('.paud[data-pid="' + pid + '"]'); if (!root) return null;
+  var a = root.querySelector('audio'), t = 0; try { t = parseFloat(localStorage.getItem('maxpos-' + a.getAttribute('src'))) || 0; } catch (e) {}
+  var d = (root.getAttribute('data-dur') || '').split(':'), dur = d.length === 2 ? (+d[0]) * 60 + (+d[1]) : 0;
+  return (t > 30 && dur && t < dur - 60) ? t : null;
+}
+function renderResume() {
+  document.querySelectorAll('[data-resume]').forEach(function (el) {
+    var t = savedPos(el.getAttribute('data-resume')), card = el.closest('.lrow'), go = card && card.querySelector('.gotext');
+    if (t === null) { el.hidden = true; if (go) go.textContent = 'Listen'; return; }
+    el.textContent = 'Left off at ' + mmss(t); el.hidden = false; if (go) go.textContent = 'Resume';
+  });
+}
+function renderRecency() {
+  document.querySelectorAll('[data-when]').forEach(function (el) {
+    var pid = el.getAttribute('data-when'), info;
+    if (pid === 'any') {
+      /* the hero: whichever recording was most recent */
+      var best = null; Object.keys(PIDS).forEach(function (p) { var i = recencyInfo(p); if (i && (!best || i.days < best.info.days)) best = { pid: p, info: i }; });
+      if (!best) { el.hidden = true; return; }
+      el.textContent = shortName(best.pid) + ' · ' + best.info.word; el.style.opacity = best.info.op; el.hidden = false; return;
     }
-    function saveSessions(s){ try { localStorage.setItem(SESS_KEY, JSON.stringify(s)); } catch(e){} }
-    function recordSession(pid, source){
-      var s = loadSessions(), today = dayStart(Date.now());
-      if (s.some(function(x){ return x.p === pid && dayStart(x.t) === today; })) return false;
-      s.push({ p: pid, t: Date.now(), src: source || "listen" });
-      saveSessions(s); renderRecency(); return true;
-    }
-    function undoTodaySession(pid){
-      var today = dayStart(Date.now());
-      saveSessions(loadSessions().filter(function(x){
-        return !(x.p === pid && dayStart(x.t) === today); }));
-      renderRecency();
-    }
-    function ordinal(n){
-      var v = n % 100;
-      if (v >= 11 && v <= 13) return n + "th";
-      return n + ({1:"st",2:"nd",3:"rd"}[n % 10] || "th");
-    }
-    function recencyInfo(pid){
-      var mine = loadSessions().filter(function(x){ return x.p === pid; });
-      if (!mine.length) return null;
-      var last = Math.max.apply(null, mine.map(function(x){ return x.t; }));
-      var days = Math.round((dayStart(Date.now()) - dayStart(last)) / 86400000);
-      if (days >= 28) return null;
-      var word, op;
-      if (days === 0){ word = "today"; op = .55; }
-      else if (days === 1){ word = "yesterday"; op = .55; }
-      else if (days <= 6){
-        word = new Date(last).toLocaleDateString(undefined, { weekday: "long" }); op = .45; }
-      else if (days <= 13){ word = "last week"; op = .35; }
-      else { word = "a couple weeks ago"; op = .25; }
-      var count = 0;
-      if (days < 14){
-        var now = new Date();
-        count = mine.filter(function(x){
-          var d = new Date(x.t);
-          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-        }).length;
-      }
-      return { word: word, op: op, days: days, count: count };
-    }
-    function todaySession(pid){
-      var today = dayStart(Date.now());
-      return loadSessions().some(function(x){ return x.p === pid && dayStart(x.t) === today; });
-    }
-    function pidOf(el){ return el.closest(".view").id.replace("view-", ""); }
-    function renderRecency(){
-      document.querySelectorAll(".lib-row[href]").forEach(function(row){
-        var el = row.querySelector(".lr-when");
-        if (!el) return;
-        var info = recencyInfo(row.getAttribute("href").replace("#/", ""));
-        if (!info){ el.style.display = "none"; return; }
-        el.textContent = info.word + (info.count >= 2 ? " · " + ordinal(info.count) + " time this month" : "");
-        el.style.opacity = info.op;
-        el.style.display = "block";
-      });
-      document.querySelectorAll(".last-line").forEach(function(el){
-        var info = recencyInfo(pidOf(el));
-        if (!info){ el.style.display = "none"; return; }
-        el.textContent = "Last time: " + info.word +
-          (info.count >= 2 ? " — your " + ordinal(info.count) + " time this month" : "") + ".";
-        el.style.opacity = Math.max(info.op, .45);
-        el.style.display = "block";
-      });
-      document.querySelectorAll(".mark-line").forEach(function(btn){
-        if (btn.dataset.arming) return; // mid undo-window: leave its text alone
-        if (todaySession(pidOf(btn))){
-          btn.textContent = "Marked today ✓"; btn.classList.add("done"); btn.disabled = true;
-        } else {
-          btn.textContent = "Practiced without the recording? Mark it";
-          btn.classList.remove("done"); btn.disabled = false;
-        }
-      });
-    }
+    info = recencyInfo(pid);
+    if (!info) { el.hidden = true; return; }
+    el.textContent = info.word.charAt(0).toUpperCase() + info.word.slice(1) + (info.count >= 2 ? ' · ' + ordinal(info.count) + ' time this month' : '');
+    el.style.opacity = info.op; el.hidden = false;
+  });
+  document.querySelectorAll('[data-last]').forEach(function (el) {
+    var info = recencyInfo(el.getAttribute('data-last'));
+    if (!info) { el.hidden = true; return; }
+    el.textContent = 'Last time: ' + info.word + (info.count >= 2 ? ' — your ' + ordinal(info.count) + ' time this month' : '') + '.';
+    el.style.opacity = Math.max(info.op, .65); el.hidden = false;
+  });
+  document.querySelectorAll('.mark[data-pid]').forEach(function (btn) {
+    if (btn.dataset.arming) return; /* mid undo-window: leave its text alone */
+    if (todaySession(btn.getAttribute('data-pid'))) { btn.textContent = 'Marked today ✓'; btn.classList.add('done'); btn.disabled = true; }
+    else { btn.textContent = 'Practiced without the recording? Mark it'; btn.classList.remove('done'); btn.disabled = false; }
+  });
+  renderResume();
+}
+/* manual mark, with a 60-second undo */
+document.querySelectorAll('.mark[data-pid]').forEach(function (btn) {
+  var timer = null;
+  btn.addEventListener('click', function () {
+    var pid = btn.getAttribute('data-pid');
+    if (btn.dataset.arming) { clearTimeout(timer); delete btn.dataset.arming; undoTodaySession(pid); return; }
+    if (todaySession(pid)) return;
+    recordSession(pid, 'manual');
+    btn.dataset.arming = '1'; btn.textContent = 'Marked — undo'; btn.disabled = false; btn.classList.remove('done');
+    timer = setTimeout(function () { delete btn.dataset.arming; renderRecency(); }, 60000);
+  });
+});
+document.addEventListener('visibilitychange', function () { if (!document.hidden) renderRecency(); }); /* a new day while the app sat open */
 
-    /* ---------- routing ---------- */
-    var VIEWS = ["home", "pelvic-clock", "pelvic-floor", "session"];
-    function route(){
-      var h = (location.hash || "#/").replace(/^#\/?/, "");
-      var id = VIEWS.indexOf(h) >= 0 ? h : "home";
-      document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("on"); });
-      document.getElementById("view-" + id).classList.add("on");
-      document.querySelectorAll("audio").forEach(function(a){
-        if (!a.closest(".view").classList.contains("on")) a.pause();
-      });
-      window.scrollTo(0, 0);
+/* ---------- players (one control each: the round button; native controls hidden) ----------
+   Resume where a long lesson was left off (same maxpos-* keys as before). Listening accumulates
+   scrub-proof; half the track or 8 minutes records the session. Lock-screen controls via Media Session. */
+var PLAYERS = {};
+function mmss(s) { s = Math.max(0, Math.round(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+function txt(k, d) { var el = document.querySelector('[data-key="' + k + '"]'); return el && el.textContent.trim() ? el.textContent.trim() : d; }
+function playPid(pid) { if (document.body.hasAttribute('data-local-edit')) return; var p = PLAYERS[pid]; if (p) p.play(); }
+document.querySelectorAll('.paud[data-pid]').forEach(function (root) {
+  var a = root.querySelector('audio'), b = root.querySelector('.play'), prog = root.querySelector('.prog'), fill = root.querySelector('.prog-fill'), cur = root.querySelector('.tcur'), rem = root.querySelector('.trem'), st = root.querySelector('.pstatus'), presume = root.querySelector('.presume');
+  var pid = root.getAttribute('data-pid'), durTxt = root.getAttribute('data-dur') || '', posKey = 'maxpos-' + a.getAttribute('src');
+  var accum = 0, lastTick = null, failed = false;
+  function paint() {
+    var d = a.duration || 0, t = a.currentTime || 0, pct = d ? (t / d) * 100 : 0;
+    fill.style.width = pct + '%'; prog.setAttribute('aria-valuenow', String(Math.round(pct)));
+    cur.textContent = mmss(t); rem.textContent = d ? '−' + mmss(d - t) : (durTxt ? '−' + durTxt : '');
+    var playing = !a.paused && !a.ended;
+    b.classList.toggle('is-playing', playing); b.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+  }
+  function play() {
+    if (failed) { showStatus(); return; }
+    Object.keys(PLAYERS).forEach(function (k) { if (k !== pid) PLAYERS[k].pause(); });
+    try { var p = a.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+  }
+  function showStatus() {
+    st.textContent = PREVIEW ? 'Preview: the recording plays on the live app, not here.' : 'The recording couldn\'t load. Check your connection and try again.';
+    st.hidden = false;
+  }
+  PLAYERS[pid] = { play: play, pause: function () { a.pause(); } };
+  b.onclick = function () { if (a.paused) play(); else a.pause(); };
+  ['timeupdate', 'play', 'pause', 'loadedmetadata', 'durationchange', 'seeked'].forEach(function (ev) { a.addEventListener(ev, paint); });
+  a.addEventListener('error', function () { failed = true; if (!a.paused || a.currentTime > 0 || document.activeElement === b) showStatus(); paint(); });
+  b.addEventListener('click', function () { if (failed) showStatus(); });
+  a.addEventListener('loadedmetadata', function () {
+    var t = 0; try { t = parseFloat(localStorage.getItem(posKey)) || 0; } catch (e) {}
+    if (t > 30 && a.duration && t < a.duration - 60) { a.currentTime = t; if (presume) { presume.textContent = 'Picks up where you left off, at ' + mmss(t) + '.'; presume.hidden = false; } }
+    paint();
+  });
+  a.addEventListener('timeupdate', function () {
+    if (a.paused) return;
+    try { localStorage.setItem(posKey, String(Math.floor(a.currentTime))); } catch (e) {}
+    if (lastTick !== null) { var delta = a.currentTime - lastTick; if (delta > 0 && delta < 1.5) accum += delta; }
+    lastTick = a.currentTime;
+    if (a.duration && (accum >= a.duration / 2 || accum >= 480)) recordSession(pid, 'listen');
+  });
+  a.addEventListener('play', function () { if (presume) presume.hidden = true; });
+  a.addEventListener('ended', function () { try { localStorage.removeItem(posKey); } catch (e) {} a.currentTime = 0; paint(); });
+  function seekTo(x) { var r = prog.getBoundingClientRect(); var f = Math.max(0, Math.min(1, (x - r.left) / r.width)); if (a.duration) { a.currentTime = f * a.duration; paint(); } }
+  var drag = false;
+  prog.addEventListener('pointerdown', function (e) { drag = true; try { prog.setPointerCapture(e.pointerId); } catch (err) {} seekTo(e.clientX); });
+  prog.addEventListener('pointermove', function (e) { if (drag) seekTo(e.clientX); });
+  prog.addEventListener('pointerup', function () { drag = false; });
+  prog.addEventListener('pointercancel', function () { drag = false; });
+  prog.addEventListener('keydown', function (e) { if (!a.duration) return; if (e.key === 'ArrowRight') { a.currentTime = Math.min(a.duration, a.currentTime + 15); paint(); } if (e.key === 'ArrowLeft') { a.currentTime = Math.max(0, a.currentTime - 15); paint(); } });
+  /* lock-screen / earbud controls follow whichever recording is playing */
+  a.addEventListener('play', function () {
+    if (!('mediaSession' in navigator) || !window.MediaMetadata) return;
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({ title: txt(root.getAttribute('data-name'), pid), artist: txt(root.getAttribute('data-credit'), ''), album: txt('title', "Max's Practice Map"), artwork: [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }] });
+      navigator.mediaSession.setActionHandler('play', play);
+      navigator.mediaSession.setActionHandler('pause', function () { a.pause(); });
+      navigator.mediaSession.setActionHandler('seekbackward', function () { a.currentTime = Math.max(0, a.currentTime - 15); });
+      navigator.mediaSession.setActionHandler('seekforward', function () { a.currentTime = Math.min(a.duration || 0, a.currentTime + 15); });
+    } catch (e) {}
+  });
+  paint();
+});
+
+/* ---------- your notes (per-viewer) ----------
+   Quick notes (+ button, or "Add a note" after a practice) keep the screen they were written on and stay
+   until Max removes them. A note added from a practice screen also counts as that day's session.
+   "Send to Tanner" sends the main note plus whatever was added since the last send. */
+var NKEY = 'max-map-note', QKEY = 'max-map-quick', SKEY = 'max-map-sent', LKEY = 'max-map-lastsent';
+var ENDPOINT = 'https://formsubmit.co/ajax/e5140376f99018c5113aaaa81b550434'; /* same FormSubmit box as the other maps and the first max-practice site → Tanner's inbox */
+var noteMain = document.getElementById('note-main'), nstatus = document.getElementById('nstatus');
+try { noteMain.value = localStorage.getItem(NKEY) || ''; } catch (e) {}
+noteMain.addEventListener('input', function () { try { localStorage.setItem(NKEY, noteMain.value); } catch (e) {} });
+var quick = [];
+try { quick = JSON.parse(localStorage.getItem(QKEY) || '[]') || []; } catch (e) { quick = []; }
+function saveQuick() { try { localStorage.setItem(QKEY, JSON.stringify(quick)); } catch (e) {} }
+function today() { return new Date().toISOString().slice(0, 10); }
+function lastSent() { try { return +localStorage.getItem(LKEY) || 0; } catch (e) { return 0; } }
+function fmtDate(ts) { return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
+function noteTs(n) { return n.ts || (n.d ? new Date(n.d + 'T12:00:00').getTime() : 0); }
+function screenLabel() {
+  var s = curScreen();
+  if (s === 'home') return 'Home';
+  var t = document.querySelector('#screen-' + s + ' .stitle'); return t ? t.textContent.replace(/\s+/g, ' ').trim() : s;
+}
+function allNotes() {
+  var out = quick.map(function (n, i) { return { ts: noteTs(n), t: n.t, ctx: n.ctx || '', i: i }; });
+  out.sort(function (a, b) { return b.ts - a.ts; });
+  return out;
+}
+var notesShowEarlier = false;
+function noteItem(n, sharedFlag) {
+  var li = document.createElement('li');
+  var head = document.createElement('div'); head.className = 'qhead';
+  var d = document.createElement('span'); d.className = 'd'; d.textContent = fmtDate(n.ts) + (sharedFlag ? ' · shared' : '');
+  head.appendChild(d);
+  if (n.ctx) { var c = document.createElement('span'); c.className = 'qctx'; c.textContent = n.ctx; head.appendChild(c); }
+  var t = document.createElement('div'); t.className = 'qt'; t.textContent = n.t;
+  li.appendChild(head); li.appendChild(t);
+  var x = document.createElement('button'); x.type = 'button'; x.className = 'qx'; x.title = 'Remove'; x.setAttribute('aria-label', 'Remove note'); x.textContent = '×'; x.onclick = function () { quick.splice(n.i, 1); saveQuick(); renderNotes(); }; li.appendChild(x);
+  return li;
+}
+/* new since the last share on top; everything already shared folds behind "Show earlier" */
+function renderNotes() {
+  var ul = document.getElementById('qlist'), more = document.getElementById('qmore'); if (!ul) return;
+  var notes = allNotes(), shared = lastSent();
+  var fresh = notes.filter(function (n) { return n.ts > shared; }), earlier = notes.filter(function (n) { return n.ts <= shared; });
+  var empty = document.getElementById('qempty'); if (empty) empty.hidden = notes.length > 0;
+  var none = document.getElementById('qnone'); if (none) none.hidden = !(fresh.length === 0 && earlier.length > 0);
+  ul.innerHTML = ''; fresh.forEach(function (n) { ul.appendChild(noteItem(n, false)); });
+  if (more) {
+    more.innerHTML = '';
+    if (earlier.length) {
+      var tg = document.createElement('button'); tg.type = 'button'; tg.className = 'reset qtoggle';
+      tg.textContent = (notesShowEarlier ? 'Hide earlier' : 'Show earlier') + ' (' + earlier.length + ')';
+      tg.onclick = function () { notesShowEarlier = !notesShowEarlier; renderNotes(); };
+      more.appendChild(tg);
+      if (notesShowEarlier) { var ul2 = document.createElement('ul'); ul2.className = 'qlist'; earlier.forEach(function (n) { ul2.appendChild(noteItem(n, true)); }); more.appendChild(ul2); }
     }
-    window.addEventListener("hashchange", route);
-
-    /* ---------- players ---------- */
-    var fmt = function(s){ s = Math.max(0, Math.floor(s || 0));
-      return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
-    var PLAY = '<i class="tri"></i>';
-    var PAUSE = '<div class="bars"><i></i><i></i></div>';
-
-    document.querySelectorAll(".m-player[data-audio]").forEach(function(p){
-      p.innerHTML =
-        '<audio src="' + p.dataset.audio + '" preload="metadata"></audio>' +
-        '<button class="playbtn" aria-label="Play">' + PLAY + '</button>' +
-        '<div class="pm">' +
-          '<div class="now">Now playing</div>' +
-          '<div class="ptitle">' + p.dataset.title + '</div>' +
-          '<div class="scrub">' +
-            '<div class="ptrack"><div class="pfill"></div><div class="knob"></div></div>' +
-            '<span class="ptime">0:00 / ' + p.dataset.dur + '</span>' +
-          '</div>' +
-        '</div>';
-      var audio = p.querySelector("audio"), btn = p.querySelector(".playbtn"),
-          fill = p.querySelector(".pfill"), knob = p.querySelector(".knob"),
-          time = p.querySelector(".ptime"), track = p.querySelector(".ptrack");
-      function paint(){
-        var d = audio.duration || 0, pct = d ? (audio.currentTime / d) * 100 : 0;
-        fill.style.width = pct + "%"; knob.style.left = pct + "%";
-        time.textContent = fmt(audio.currentTime) + " / " + (d ? fmt(d) : p.dataset.dur);
-      }
-      // resume long lessons where they were left off
-      var posKey = "maxpos-" + p.dataset.audio;
-      audio.addEventListener("loadedmetadata", function(){
-        var t = parseFloat(localStorage.getItem(posKey)) || 0;
-        if (t > 30 && audio.duration && t < audio.duration - 60) audio.currentTime = t;
-        paint();
-      });
-      // scrub-proof accumulated listening → auto session at half the track or 8 min
-      var accum = 0, lastTick = null;
-      audio.addEventListener("timeupdate", function(){
-        if (!audio.paused) {
-          try { localStorage.setItem(posKey, String(Math.floor(audio.currentTime))); } catch(e){}
-          if (lastTick !== null) {
-            var delta = audio.currentTime - lastTick;
-            if (delta > 0 && delta < 1.5) accum += delta;
-          }
-          lastTick = audio.currentTime;
-          if (audio.duration && (accum >= audio.duration / 2 || accum >= 480)) {
-            recordSession(pidOf(p), "listen");
-          }
-        }
-        paint();
-      });
-      audio.addEventListener("ended", function(){
-        try { localStorage.removeItem(posKey); } catch(e){}
-      });
-      audio.addEventListener("play",  function(){ btn.innerHTML = PAUSE; btn.setAttribute("aria-label","Pause"); });
-      audio.addEventListener("pause", function(){ btn.innerHTML = PLAY;  btn.setAttribute("aria-label","Play"); });
-      audio.addEventListener("ended", function(){ btn.innerHTML = PLAY; });
-      btn.addEventListener("click", function(){ audio.paused ? audio.play() : audio.pause(); });
-      track.addEventListener("click", function(e){
-        var r = track.getBoundingClientRect();
-        var ratio = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
-        if (audio.duration) audio.currentTime = ratio * audio.duration;
-      });
-    });
-
-    /* ---------- notes → Tanner (FormSubmit AJAX) ---------- */
-    var ENDPOINT = "https://formsubmit.co/ajax/e5140376f99018c5113aaaa81b550434";
-    function nsKey(practice){ return "maxnotes-" + practice.toLowerCase().replace(/[^a-z]+/g, "-"); }
-    function loadNotes(practice){
-      try { return JSON.parse(localStorage.getItem(nsKey(practice)) || "[]"); }
-      catch(e){ return []; }
+  }
+  var ca = document.getElementById('copyall'); if (ca) ca.hidden = notes.length === 0;
+}
+renderNotes();
+var fab = document.getElementById('fab'), sheet = document.getElementById('sheet'), ta = document.getElementById('sheet-text'), sheetLbl = document.getElementById('sheet-lbl'), sheetCtx = '', sheetPid = '';
+function openSheet(on) {
+  sheet.hidden = !on; fab.setAttribute('aria-expanded', on ? 'true' : 'false');
+  if (on) {
+    sheetCtx = screenLabel(); var sec = document.getElementById('screen-' + curScreen()); sheetPid = sec ? (sec.getAttribute('data-pid') || '') : '';
+    if (sheetLbl) sheetLbl.textContent = 'Quick note · ' + sheetCtx; ta.focus();
+  }
+}
+fab.onclick = function () { openSheet(sheet.hidden); };
+document.getElementById('sheet-cancel').onclick = function () { ta.value = ''; openSheet(false); };
+document.getElementById('sheet-save').onclick = function () {
+  var t = ta.value.trim(); if (!t) { openSheet(false); return; }
+  quick.push({ d: today(), ts: Date.now(), t: t, ctx: sheetCtx }); saveQuick(); renderNotes(); ta.value = ''; openSheet(false);
+  if (sheetPid) recordSession(sheetPid, 'note');
+};
+function compile(all) {
+  var parts = [];
+  var m = noteMain.value.trim(); if (m && !all) parts.push(m);
+  var since = all ? -1 : lastSent(); var list = allNotes().filter(function (n) { return n.ts > since; }).reverse();
+  if (list.length) parts.push(list.map(function (n) { return fmtDate(n.ts) + (n.ctx ? ' · ' + n.ctx : '') + ' — ' + n.t; }).join('\n'));
+  return parts.join('\n\n');
+}
+function loadSent() { try { return JSON.parse(localStorage.getItem(SKEY) || '[]'); } catch (e) { return []; } }
+/* one-time: notes sent from the first dashboard (maxnotes-<practice>) join the sent history here */
+(function migrate() {
+  try {
+    if (localStorage.getItem('max-map-migrated')) return;
+    var names = { 'pelvic-clock-connected-spine': 'Pelvic Clock', 'reducing-tension-in-your-pelvic-floor': 'Pelvic Floor', 'ground-breath-our-session-practice': 'Ground & Breath' };
+    var sent = loadSent(), found = false;
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i); if (!k || k.indexOf('maxnotes-') !== 0) continue;
+      var label = names[k.slice(9)] || k.slice(9);
+      (JSON.parse(localStorage.getItem(k) || '[]') || []).forEach(function (n) { if (n && n.note) { sent.push({ t: n.t || 0, note: label + ' — ' + n.note, how: 'sent' }); found = true; } });
     }
-    function fmtDate(t){
-      var d = new Date(t);
-      return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-    }
-
-    document.querySelectorAll(".note-card").forEach(function(card){
-      var practice = card.dataset.practice;
-      var box = card.querySelector(".n-box"), send = card.querySelector(".send"),
-          status = card.querySelector(".note-status"), history = card.querySelector(".note-history");
-
-      function renderHistory(){
-        var notes = loadNotes(practice).slice(-3).reverse();
-        history.innerHTML = notes.map(function(n){
-          return '<div class="nh-item"><div class="nh-date">Sent ' + fmtDate(n.t) +
-                 ' ✓</div><p class="nh-text"></p></div>';
-        }).join("");
-        history.querySelectorAll(".nh-text").forEach(function(el, i){ el.textContent = notes[i].note; });
-        history.style.display = notes.length ? "block" : "none";
-      }
-      renderHistory();
-
-      send.addEventListener("click", function(){
-        var text = box.value.trim();
-        if (!text) { status.textContent = "Write a note first — even one line is plenty."; return; }
-        send.disabled = true; status.classList.remove("err"); status.textContent = "Sending…";
-        fetch(ENDPOINT, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Accept": "application/json" },
-          body: JSON.stringify({
-            _subject: "Max dashboard — note after " + practice,
-            practice: practice,
-            note: text
-          })
-        }).then(function(r){
-          if (!r.ok) throw new Error("HTTP " + r.status);
-          return r.json();
-        }).then(function(){
-          var notes = loadNotes(practice);
-          notes.push({ t: Date.now(), note: text });
-          try { localStorage.setItem(nsKey(practice), JSON.stringify(notes)); } catch(e){}
-          box.value = "";
-          status.textContent = "Sent to Tanner ✓";
-          recordSession(pidOf(card), "note");
-          renderHistory();
-          send.disabled = false;
-        }).catch(function(){
-          status.classList.add("err");
-          status.textContent = "Couldn't send just now — your note is still here. Try again in a moment.";
-          send.disabled = false;
-        });
-      });
-    });
-
-    /* ---------- manual mark (60-second undo window) ---------- */
-    document.querySelectorAll(".mark-line").forEach(function(btn){
-      var timer = null;
-      btn.addEventListener("click", function(){
-        var pid = pidOf(btn);
-        if (btn.dataset.arming){                       // undo
-          clearTimeout(timer); delete btn.dataset.arming;
-          undoTodaySession(pid);
-          return;
-        }
-        if (todaySession(pid)) return;
-        recordSession(pid, "manual");
-        btn.dataset.arming = "1";
-        btn.textContent = "Marked — undo";
-        timer = setTimeout(function(){
-          delete btn.dataset.arming; renderRecency();
-        }, 60000);
-      });
-    });
-
-    route();
-    renderRecency();
-
-    /* ---------- PWA ---------- */
-    if ("serviceWorker" in navigator && location.protocol === "https:") {
-      navigator.serviceWorker.register("sw.js");
-    }
-  </script>
+    if (found) { sent.sort(function (a, b) { return a.t - b.t; }); localStorage.setItem(SKEY, JSON.stringify(sent)); }
+    localStorage.setItem('max-map-migrated', '1');
+  } catch (e) {}
+})();
+function renderHist() {
+  var h = document.getElementById('nhist'); var sent = loadSent().slice(-3).reverse();
+  h.innerHTML = sent.map(function (n) {
+    var d = new Date(n.t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    return '<div class="nh-item"><div class="nh-date">' + (n.how === 'copied' ? 'Copied ' + d : 'Sent ' + d + ' ✓') + '</div><p class="nh-text"></p></div>';
+  }).join('');
+  var ps = h.querySelectorAll('.nh-text'); sent.forEach(function (n, i) { ps[i].textContent = n.note; });
+}
+renderHist();
+/* sending or copying both count as shared: the box clears, the notes stay and fold into "earlier" */
+function afterShare(text, how) {
+  var sent = loadSent(); sent.push({ t: Date.now(), note: text, how: how });
+  try { localStorage.setItem(SKEY, JSON.stringify(sent)); localStorage.setItem(LKEY, String(Date.now())); localStorage.setItem(NKEY, ''); } catch (e) {}
+  noteMain.value = '';
+  renderNotes(); renderHist();
+}
+function afterSend(text) { afterShare(text, 'sent'); }
+function mailtoFallback(text) {
+  window.location.href = 'mailto:tannerholman97@gmail.com?subject=' + encodeURIComponent('Note — Max — ' + today()) + '&body=' + encodeURIComponent(text);
+}
+document.getElementById('send').onclick = function () {
+  var text = compile(); var btn = this;
+  if (!text) { nstatus.className = 'nstatus'; nstatus.textContent = 'Write a note first — even one line is plenty.'; return; }
+  if (PREVIEW) { nstatus.className = 'nstatus'; nstatus.textContent = 'Preview: on the live app this lands in Tanner\'s inbox.'; return; }
+  btn.disabled = true; nstatus.className = 'nstatus'; nstatus.textContent = 'Sending…';
+  fetch(ENDPOINT, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ _subject: 'Max practice map — note ' + today(), client: 'Max Soweski', note: text })
+  }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function () { afterSend(text); nstatus.textContent = 'Sent to Tanner ✓'; btn.disabled = false; })
+    .catch(function () { nstatus.textContent = 'Opening your mail app instead…'; btn.disabled = false; mailtoFallback(text); });
+};
+document.getElementById('copy').onclick = function () {
+  var text = compile(); if (!text) { nstatus.className = 'nstatus'; nstatus.textContent = 'Nothing new to copy.'; return; }
+  function done() { afterShare(text, 'copied'); nstatus.className = 'nstatus'; nstatus.textContent = 'Copied — paste it into a message to Tanner. Marked as shared.'; }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, done); else done();
+};
+document.getElementById('copyall').onclick = function () {
+  var text = compile(true); if (!text) { nstatus.textContent = 'No notes yet.'; return; }
+  function done() { nstatus.className = 'nstatus'; nstatus.textContent = 'Copied all notes.'; }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, done); else done();
+};
+function clearNote() { noteMain.value = ''; try { localStorage.setItem(NKEY, ''); } catch (e) {} nstatus.textContent = 'Cleared.'; }
+renderRecency();
+</script>
+<script>if ('serviceWorker' in navigator && location.protocol !== 'file:') { navigator.serviceWorker.register('sw.js').catch(function(){}); }</script>
 </body>
 </html>

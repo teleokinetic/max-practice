@@ -1,10 +1,11 @@
-/* For Max — offline support.
-   Shell is precached; the three lesson MP3s are cached best-effort at install
-   and served with Range support so seeking works offline. */
-var CACHE = "for-max-v1";
+/* Max's Practice Map — offline support.
+   The shell (page, manifest, icons) is precached and refreshed in the background on every load; the lesson
+   MP3s are cached best-effort at install and served with Range support so seeking works offline.
+   copy.json (if ever added) is never served from cache. Bump CACHE on every deploy. */
+var CACHE = "max-map-v1";
 var SHELL = ["./", "./index.html", "./manifest.webmanifest",
-             "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
-var AUDIO = ["./audio/pelvic-clock.mp3", "./audio/pelvic-floor.mp3", "./audio/session-practice.mp3"];
+             "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];
+var AUDIO = ["./audio/pelvis-head.mp3", "./audio/feet-breath-belly.mp3", "./audio/session-practice.mp3", "./audio/pelvic-floor.mp3"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil((async function () {
@@ -58,7 +59,10 @@ async function serveAudio(req) {
 
 self.addEventListener("fetch", function (e) {
   var url = new URL(e.request.url);
-  if (e.request.method !== "GET") return; // note-sending etc. → network
+  if (e.request.method !== "GET") return; // note-sending (FormSubmit POST) etc. → network
+
+  // copy.json is fetched with cache: 'no-store' — always let it go to network.
+  if (url.origin === location.origin && /copy\.json$/.test(url.pathname)) return;
 
   if (url.origin === location.origin && url.pathname.indexOf("/audio/") !== -1) {
     e.respondWith(serveAudio(e.request));
@@ -90,4 +94,5 @@ self.addEventListener("fetch", function (e) {
       } catch (err) { return Response.error(); }
     })());
   }
+  // any other cross-origin request: not intercepted → network
 });
